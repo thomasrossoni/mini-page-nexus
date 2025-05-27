@@ -2,12 +2,21 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Eye, Edit, BarChart3, Settings, LogOut } from 'lucide-react';
+import { Plus, Eye, Edit, BarChart3, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { usePagesContext } from '@/contexts/PagesContext';
 import DashboardLayout from '@/components/DashboardLayout';
 import PageGrid from '@/components/PageGrid';
 
 const Dashboard = () => {
+  const { pages } = usePagesContext();
+
+  // Calcular estatísticas
+  const totalPages = pages.length;
+  const totalViews = pages.reduce((sum, page) => sum + page.views, 0);
+  const totalClicks = pages.reduce((sum, page) => sum + page.clicks, 0);
+  const conversionRate = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
@@ -33,19 +42,21 @@ const Dashboard = () => {
               <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">3</div>
-              <p className="text-xs text-muted-foreground">+1 desde ontem</p>
+              <div className="text-2xl font-bold">{totalPages}</div>
+              <p className="text-xs text-muted-foreground">
+                {totalPages === 1 ? 'página criada' : 'páginas criadas'}
+              </p>
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Visitantes Hoje</CardTitle>
+              <CardTitle className="text-sm font-medium">Visitantes Totais</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">247</div>
-              <p className="text-xs text-muted-foreground">+12% desde ontem</p>
+              <div className="text-2xl font-bold">{totalViews}</div>
+              <p className="text-xs text-muted-foreground">visualizações acumuladas</p>
             </CardContent>
           </Card>
           
@@ -55,8 +66,8 @@ const Dashboard = () => {
               <Edit className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">89</div>
-              <p className="text-xs text-muted-foreground">+23% desde ontem</p>
+              <div className="text-2xl font-bold">{totalClicks}</div>
+              <p className="text-xs text-muted-foreground">cliques em botões</p>
             </CardContent>
           </Card>
           
@@ -66,8 +77,8 @@ const Dashboard = () => {
               <Settings className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">12.5%</div>
-              <p className="text-xs text-muted-foreground">+2.1% desde ontem</p>
+              <div className="text-2xl font-bold">{conversionRate}%</div>
+              <p className="text-xs text-muted-foreground">cliques por visualização</p>
             </CardContent>
           </Card>
         </div>

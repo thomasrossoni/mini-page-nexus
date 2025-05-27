@@ -3,58 +3,55 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Edit, MoreVertical, ExternalLink, Copy } from 'lucide-react';
+import { Eye, Edit, ExternalLink, Copy } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { usePagesContext } from '@/contexts/PagesContext';
+import { toast } from 'sonner';
 
 const PageGrid = () => {
-  // Mock data - em produção viria de uma API
-  const pages = [
-    {
-      id: 1,
-      name: 'Minha Loja Online',
-      url: 'minha-loja',
-      template: 'Produto Digital',
-      views: 156,
-      clicks: 23,
-      status: 'published',
-      lastEdited: '2 horas atrás',
-      domain: 'meuslinks.app'
-    },
-    {
-      id: 2,
-      name: 'Dr. Silva - Dentista',
-      url: 'dr-silva',
-      template: 'Profissional da Saúde',
-      views: 89,
-      clicks: 12,
-      status: 'published',
-      lastEdited: '1 dia atrás',
-      domain: 'entreemcontato.app'
-    },
-    {
-      id: 3,
-      name: 'Evento Lançamento',
-      url: 'evento-lancamento',
-      template: 'Evento',
-      views: 234,
-      clicks: 45,
-      status: 'draft',
-      lastEdited: '3 dias atrás',
-      domain: 'faleconosco.app'
-    }
-  ];
+  const { pages } = usePagesContext();
 
   const copyToClipboard = (url: string, domain: string) => {
     navigator.clipboard.writeText(`https://${domain}/${url}`);
-    // Aqui poderia adicionar um toast de sucesso
+    toast.success('Link copiado para a área de transferência!');
   };
+
+  const formatDate = (date: Date) => {
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Agora mesmo';
+    if (diffInHours < 24) return `${diffInHours} hora${diffInHours > 1 ? 's' : ''} atrás`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) return `${diffInDays} dia${diffInDays > 1 ? 's' : ''} atrás`;
+    
+    return date.toLocaleDateString('pt-BR');
+  };
+
+  if (pages.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Eye className="w-8 h-8 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma página criada ainda</h3>
+        <p className="text-gray-600 mb-6">Crie sua primeira landing page e comece a compartilhar seus links</p>
+        <Link to="/create">
+          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+            Criar Primeira Página
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-gray-900">Suas Páginas</h2>
         <div className="flex items-center space-x-2">
-          <Badge variant="secondary">{pages.length} páginas</Badge>
+          <Badge variant="secondary">{pages.length} página{pages.length !== 1 ? 's' : ''}</Badge>
         </div>
       </div>
 
@@ -84,7 +81,7 @@ const PageGrid = () => {
               <div className="space-y-4">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Template: {page.template}</span>
-                  <span>{page.lastEdited}</span>
+                  <span>{formatDate(page.lastEdited)}</span>
                 </div>
                 
                 <div className="flex justify-between text-sm">

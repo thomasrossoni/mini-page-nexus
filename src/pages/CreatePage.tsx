@@ -5,59 +5,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { usePagesContext } from '@/contexts/PagesContext';
+import { templates, getTemplate } from '@/utils/templates';
+import { toast } from 'sonner';
 import DashboardLayout from '@/components/DashboardLayout';
 
 const CreatePage = () => {
+  const navigate = useNavigate();
+  const { createPage } = usePagesContext();
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [pageName, setPageName] = useState('');
   const [pageUrl, setPageUrl] = useState('');
   const [selectedDomain, setSelectedDomain] = useState('meuslinks.app');
-
-  const templates = [
-    {
-      id: 'influencer',
-      name: 'Influencer',
-      description: 'Perfeito para criadores de conteúdo e influenciadores digitais',
-      icon: <Palette className="w-8 h-8" />,
-      preview: '/api/placeholder/300/400'
-    },
-    {
-      id: 'restaurant',
-      name: 'Restaurante',
-      description: 'Ideal para restaurantes, cafés e estabelecimentos alimentícios',
-      icon: <Smartphone className="w-8 h-8" />,
-      preview: '/api/placeholder/300/400'
-    },
-    {
-      id: 'agency',
-      name: 'Agência',
-      description: 'Para agências digitais e empresas de serviços',
-      icon: <Globe className="w-8 h-8" />,
-      preview: '/api/placeholder/300/400'
-    },
-    {
-      id: 'digital-product',
-      name: 'Produto Digital',
-      description: 'Vendas de cursos, ebooks e produtos digitais',
-      icon: <BarChart3 className="w-8 h-8" />,
-      preview: '/api/placeholder/300/400'
-    },
-    {
-      id: 'event',
-      name: 'Evento',
-      description: 'Divulgação de eventos, workshops e palestras',
-      icon: <Zap className="w-8 h-8" />,
-      preview: '/api/placeholder/300/400'
-    },
-    {
-      id: 'health',
-      name: 'Profissional da Saúde',
-      description: 'Médicos, dentistas, fisioterapeutas e estética',
-      icon: <Shield className="w-8 h-8" />,
-      preview: '/api/placeholder/300/400'
-    }
-  ];
 
   const domains = [
     'meuslinks.app',
@@ -66,19 +26,45 @@ const CreatePage = () => {
     'contatoexpress.app'
   ];
 
+  const iconMap: { [key: string]: React.ReactNode } = {
+    'influencer': <Palette className="w-8 h-8" />,
+    'restaurant': <Smartphone className="w-8 h-8" />,
+    'agency': <Globe className="w-8 h-8" />,
+    'digital-product': <BarChart3 className="w-8 h-8" />,
+    'event': <Zap className="w-8 h-8" />,
+    'health': <Shield className="w-8 h-8" />
+  };
+
   const handleCreate = () => {
     if (!selectedTemplate || !pageName || !pageUrl) {
-      alert('Preencha todos os campos obrigatórios');
+      toast.error('Preencha todos os campos obrigatórios');
       return;
     }
-    
-    // Aqui implementaria a lógica de criação
-    console.log('Criando página:', {
-      template: selectedTemplate,
-      name: pageName,
-      url: pageUrl,
-      domain: selectedDomain
-    });
+
+    const template = getTemplate(selectedTemplate);
+    if (!template) {
+      toast.error('Template não encontrado');
+      return;
+    }
+
+    try {
+      const pageId = createPage({
+        name: pageName,
+        url: pageUrl,
+        domain: selectedDomain,
+        template: template.name,
+        status: 'draft',
+        content: {
+          ...template.content,
+          title: pageName
+        }
+      });
+
+      toast.success('Página criada com sucesso!');
+      navigate(`/edit/${pageId}`);
+    } catch (error) {
+      toast.error('Erro ao criar página');
+    }
   };
 
   return (
@@ -122,7 +108,7 @@ const CreatePage = () => {
                     >
                       <div className="flex items-start space-x-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white">
-                          {template.icon}
+                          {iconMap[template.id]}
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-gray-900">{template.name}</h3>
@@ -200,8 +186,30 @@ const CreatePage = () => {
                   <CardTitle>Preview</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="aspect-[3/4] bg-gray-100 rounded-lg flex items-center justify-center">
-                    <span className="text-gray-500">Preview do Template</span>
+                  <div className="aspect-[3/4] bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                    {(() => {
+                      const template = getTemplate(selectedTemplate);
+                      if (!template) return <span className="text-gray-500">Template não encontrado</span>;
+                      
+                      return (
+                        <div className="w-full h-full p-4 flex flex-col items-center justify-start bg-white">
+                          <div className="w-16 h-16 bg-gray-300 rounded-full mb-3"></div>
+                          <h3 className="font-bold text-lg mb-2 text-center">{pageName || template.content.title}</h3>
+                          <p className="text-sm text-gray-600 mb-4 text-center">{template.content.description}</p>
+                          <div className="space-y-2 w-full max-w-xs">
+                            {template.content.elements.filter(el => el.type === 'button').slice(0, 3).map((button, index) => (
+                              <div 
+                                key={index}
+                                className="w-full h-8 rounded text-xs flex items-center justify-center text-white"
+                                style={{ backgroundColor: button.style?.backgroundColor || '#3b82f6' }}
+                              >
+                                {button.content}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </CardContent>
               </Card>
