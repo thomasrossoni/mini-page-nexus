@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Zap, Palette, BarChart3, Globe, Shield, Smartphone } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Hero from '@/components/Hero';
 import Templates from '@/components/Templates';
 import Features from '@/components/Features';
@@ -31,10 +32,14 @@ const Index = () => {
               <a href="#templates" className="text-gray-600 hover:text-gray-900 transition-colors">Templates</a>
               <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Funcionalidades</a>
               <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Preços</a>
-              <Button variant="outline" className="mr-2">Entrar</Button>
-              <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-                Começar Grátis
-              </Button>
+              <Link to="/dashboard">
+                <Button variant="outline" className="mr-2">Dashboard</Button>
+              </Link>
+              <Link to="/dashboard">
+                <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  Começar Grátis
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
