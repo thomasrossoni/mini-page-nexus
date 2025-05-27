@@ -22,7 +22,7 @@ interface Page {
   };
 }
 
-interface PageElement {
+export interface PageElement {
   id: string;
   type: 'profile' | 'title' | 'description' | 'button' | 'text' | 'image' | 'divider';
   content?: string;
