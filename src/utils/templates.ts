@@ -528,9 +528,9 @@ export const templates: Template[] = [
   },
   // ÁRVORE DE LINKS
   {
-    id: 'link-tree',
-    name: 'Árvore de Links',
-    description: 'Página de links simples estilo Linktree',
+    id: 'link-tree-classic',
+    name: 'Árvore de Links Clássica',
+    description: 'Página simples estilo Linktree tradicional',
     preview: 'bg-gradient-to-br from-green-400 to-blue-500',
     type: 'link-tree',
     content: {
@@ -573,6 +573,101 @@ export const templates: Template[] = [
           url: 'https://wa.me/5511999999999', 
           visible: true,
           style: { backgroundColor: '#25D366', textColor: '#ffffff' }
+        }
+      ]
+    }
+  },
+  {
+    id: 'link-tree-premium',
+    name: 'Árvore de Links Premium',
+    description: 'Design elegante com elementos visuais e layout sofisticado',
+    preview: 'bg-gradient-to-br from-indigo-400 to-purple-500',
+    type: 'link-tree',
+    content: {
+      title: 'Crescent Moon',
+      description: 'Delicate, unique and inspiring silver jewellery with Spirit, handmade.',
+      backgroundColor: '#f8fafc',
+      textColor: '#1e293b',
+      elements: [
+        { 
+          id: '1', 
+          type: 'profile', 
+          visible: true,
+          style: { borderRadius: '50%', padding: '4px' }
+        },
+        { 
+          id: '2', 
+          type: 'title', 
+          content: 'Crescent Moon', 
+          visible: true,
+          style: { fontSize: '32px', fontWeight: '400', textColor: '#1e293b', margin: '16px 0' }
+        },
+        { 
+          id: '3', 
+          type: 'description', 
+          content: 'Delicate, unique and inspiring silver jewellery with Spirit, handmade.', 
+          visible: true,
+          style: { fontSize: '16px', textColor: '#64748b', margin: '8px 0 24px 0' }
+        },
+        {
+          id: '4',
+          type: 'gallery-carousel',
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300',
+              'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=300',
+              'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'button', 
+          content: 'ONLINE STORE', 
+          url: 'https://store.crescentmoon.com', 
+          visible: true,
+          style: { 
+            backgroundColor: '#94a3b8', 
+            textColor: '#ffffff',
+            borderRadius: '0px',
+            padding: '16px',
+            margin: '8px 0',
+            fontSize: '14px',
+            fontWeight: '500'
+          }
+        },
+        { 
+          id: '6', 
+          type: 'button', 
+          content: 'GEMSTONES', 
+          url: 'https://gems.crescentmoon.com', 
+          visible: true,
+          style: { 
+            backgroundColor: '#94a3b8', 
+            textColor: '#ffffff',
+            borderRadius: '0px',
+            padding: '16px',
+            margin: '8px 0',
+            fontSize: '14px',
+            fontWeight: '500'
+          }
+        },
+        { 
+          id: '7', 
+          type: 'button', 
+          content: 'ABOUT US', 
+          url: 'https://about.crescentmoon.com', 
+          visible: true,
+          style: { 
+            backgroundColor: '#94a3b8', 
+            textColor: '#ffffff',
+            borderRadius: '0px',
+            padding: '16px',
+            margin: '8px 0',
+            fontSize: '14px',
+            fontWeight: '500'
+          }
         }
       ]
     }

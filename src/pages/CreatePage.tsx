@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3, Link } from 'lucide-react';
+import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3, Link, Sparkles } from 'lucide-react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { templates, getTemplate } from '@/utils/templates';
@@ -34,7 +34,8 @@ const CreatePage = () => {
     'digital-product': <BarChart3 className="w-8 h-8" />,
     'event': <Zap className="w-8 h-8" />,
     'health': <Shield className="w-8 h-8" />,
-    'link-tree': <Link className="w-8 h-8" />
+    'link-tree-classic': <Link className="w-8 h-8" />,
+    'link-tree-premium': <Sparkles className="w-8 h-8" />
   };
 
   const landingPageTemplates = templates.filter(t => t.type === 'landing-page');
@@ -140,7 +141,7 @@ const CreatePage = () => {
                   Árvore de Links
                 </CardTitle>
                 <CardDescription>
-                  Página simples com perfil e botões de links, similar ao Linktree
+                  Página com perfil e botões de links, escolha entre o estilo clássico ou premium
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -156,11 +157,20 @@ const CreatePage = () => {
                       }`}
                     >
                       <div className="flex items-start space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center text-white">
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-white ${
+                          template.id === 'link-tree-premium' 
+                            ? 'bg-gradient-to-br from-indigo-500 to-purple-500' 
+                            : 'bg-gradient-to-br from-green-500 to-blue-500'
+                        }`}>
                           {iconMap[template.id]}
                         </div>
                         <div className="flex-1">
-                          <h3 className="font-semibold text-gray-900">{template.name}</h3>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-gray-900">{template.name}</h3>
+                            {template.id === 'link-tree-premium' && (
+                              <Badge variant="outline" className="text-xs">Premium</Badge>
+                            )}
+                          </div>
                           <p className="text-sm text-gray-600 mt-1">{template.description}</p>
                         </div>
                       </div>
@@ -259,24 +269,50 @@ const CreatePage = () => {
                           </div>
                         );
                       } else {
-                        return (
-                          <div className="w-full h-full p-4 flex flex-col items-center justify-start bg-white">
-                            <div className="w-16 h-16 bg-gray-300 rounded-full mb-3"></div>
-                            <h3 className="font-bold text-lg mb-2 text-center">{pageName || template.content.title}</h3>
-                            <p className="text-sm text-gray-600 mb-4 text-center">{template.content.description}</p>
-                            <div className="space-y-2 w-full max-w-xs">
-                              {template.content.elements.filter(el => el.type === 'button').slice(0, 3).map((button, index) => (
-                                <div 
-                                  key={index}
-                                  className="w-full h-8 rounded text-xs flex items-center justify-center text-white"
-                                  style={{ backgroundColor: button.style?.backgroundColor || '#3b82f6' }}
-                                >
-                                  {button.content}
-                                </div>
-                              ))}
+                        // Preview diferente para premium vs classic
+                        if (selectedTemplate === 'link-tree-premium') {
+                          return (
+                            <div className="w-full h-full p-4 flex flex-col items-center justify-start bg-gray-50">
+                              <div className="w-16 h-16 bg-gray-300 rounded-full mb-3"></div>
+                              <h3 className="font-light text-lg mb-2 text-center text-gray-800">{pageName || template.content.title}</h3>
+                              <p className="text-xs text-gray-600 mb-3 text-center px-2">{template.content.description}</p>
+                              <div className="grid grid-cols-3 gap-1 mb-4">
+                                <div className="w-8 h-8 bg-gray-300 rounded"></div>
+                                <div className="w-8 h-8 bg-gray-300 rounded"></div>
+                                <div className="w-8 h-8 bg-gray-300 rounded"></div>
+                              </div>
+                              <div className="space-y-1 w-full max-w-xs">
+                                {[1,2,3].map((i) => (
+                                  <div 
+                                    key={i}
+                                    className="w-full h-6 bg-slate-400 text-xs flex items-center justify-center text-white text-[10px]"
+                                  >
+                                    LINK {i}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        );
+                          );
+                        } else {
+                          return (
+                            <div className="w-full h-full p-4 flex flex-col items-center justify-start bg-white">
+                              <div className="w-16 h-16 bg-gray-300 rounded-full mb-3"></div>
+                              <h3 className="font-bold text-lg mb-2 text-center">{pageName || template.content.title}</h3>
+                              <p className="text-sm text-gray-600 mb-4 text-center">{template.content.description}</p>
+                              <div className="space-y-2 w-full max-w-xs">
+                                {template.content.elements.filter(el => el.type === 'button').slice(0, 3).map((button, index) => (
+                                  <div 
+                                    key={index}
+                                    className="w-full h-8 rounded text-xs flex items-center justify-center text-white"
+                                    style={{ backgroundColor: button.style?.backgroundColor || '#3b82f6' }}
+                                  >
+                                    {button.content}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
                       }
                     })()}
                   </div>
