@@ -3,17 +3,23 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Eye, Edit, ExternalLink, Copy } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { Eye, Edit, ExternalLink, Copy, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { toast } from 'sonner';
 
 const PageGrid = () => {
-  const { pages } = usePagesContext();
+  const { pages, deletePage } = usePagesContext();
 
   const copyToClipboard = (url: string, domain: string) => {
     navigator.clipboard.writeText(`https://${domain}/${url}`);
     toast.success('Link copiado para a área de transferência!');
+  };
+
+  const handleDeletePage = (pageId: string, pageName: string) => {
+    deletePage(pageId);
+    toast.success(`Página "${pageName}" foi deletada com sucesso!`);
   };
 
   const formatDate = (date: Date) => {
@@ -120,6 +126,36 @@ const PageGrid = () => {
                   >
                     <ExternalLink className="w-4 h-4" />
                   </Button>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Deletar Página</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Tem certeza que deseja deletar a página "{page.name}"? 
+                          Esta ação não pode ser desfeita e todos os dados da página serão perdidos permanentemente.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={() => handleDeletePage(page.id, page.name)}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Deletar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </div>
             </CardContent>
