@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3, Link, Sparkles } from 'lucide-react';
+import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3, Link, Sparkles, Scale } from 'lucide-react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { templates, getTemplate } from '@/utils/templates';
@@ -34,6 +34,7 @@ const CreatePage = () => {
     'digital-product': <BarChart3 className="w-8 h-8" />,
     'event': <Zap className="w-8 h-8" />,
     'health': <Shield className="w-8 h-8" />,
+    'lawyer': <Scale className="w-8 h-8" />,
     'link-tree-classic': <Link className="w-8 h-8" />,
     'link-tree-premium': <Sparkles className="w-8 h-8" />
   };

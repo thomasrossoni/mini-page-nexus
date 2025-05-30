@@ -526,6 +526,111 @@ export const templates: Template[] = [
       ]
     }
   },
+  {
+    id: 'lawyer',
+    name: 'Advogado',
+    description: 'Landing page para advogados e escritórios jurídicos',
+    preview: 'bg-gradient-to-br from-slate-600 to-blue-800',
+    type: 'landing-page',
+    content: {
+      title: 'Dr. João Quadros - Advogado Trabalhista',
+      description: 'O Trabalhador bem Informado, tem seu Poder!',
+      backgroundColor: '#1e293b',
+      textColor: '#f8fafc',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'O Trabalhador bem Informado, tem seu Poder!', 
+          visible: true,
+          style: { fontSize: '44px', fontWeight: 'bold', textColor: '#f8fafc' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Foto do advogado ou vídeo de apresentação', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'O Escritório foi fundado pelo Sócio Proprietário João Felipe Quadros da Silva, Advogado Inscrito sob a OAB/PE 45.476, formado pela Universidade São Judas Tadeu, com o propósito de ajudar os trabalhadores para além do óbvio defendendo seus direitos.', 
+          visible: true,
+          style: { textColor: '#f8fafc' }
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400',
+              'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=400',
+              'https://images.unsplash.com/photo-1556157382-97eda2d62296?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { 
+                title: 'Para trabalhadores', 
+                description: 'Consultoria e defesa especializada para trabalhadores. Defendemos todos os trabalhos além da parcela através em Consultoria Cordata', 
+                price: 'Consulta gratuita' 
+              },
+              { 
+                title: 'Atendimento rápido', 
+                description: 'Você será atendido de segunda a sábado das 08h às 17h, seja desde a primeira consulta grátis nas terças e quartas ou até falar com um profissional', 
+                price: '48h resposta' 
+              },
+              { 
+                title: 'Acompanhamento integral', 
+                description: 'Não deixamos nossos clientes sozinhos: Acompanhamos o processo do início ao fim de forma integrada', 
+                price: 'Total suporte' 
+              },
+              { 
+                title: 'Sua causa é a nossa!', 
+                description: 'Comprometemos você e sua empresa por você, conhecemos todas as suas causas possíveis e até atuamos todos os outros em atuação', 
+                price: 'Compromisso total' 
+              }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Maria Santos', role: 'Trabalhadora', content: 'Excelente advogado, consegui todos os meus direitos!' },
+              { name: 'Pedro Silva', role: 'Funcionário Público', content: 'Profissional muito competente, recomendo a todos.' },
+              { name: 'Ana Costa', role: 'Ex-funcionária', content: 'Me ajudou muito no meu processo trabalhista, muito obrigada!' },
+              { name: 'Carlos Oliveira', role: 'Aposentado', content: 'Dr. João é um excelente profissional, muito dedicado.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 99343-5259',
+              email: 'contato@joaoquadros.adv.br',
+              address: 'Av. Paulista, 1439 - 12º Andar, Cj. 12, São Paulo - SP',
+              social: [
+                { platform: 'Instagram', url: 'https://instagram.com/joaoquadrosadv' },
+                { platform: 'WhatsApp', url: 'https://wa.me/5511993435259' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
   // ÁRVORE DE LINKS
   {
     id: 'link-tree-classic',
