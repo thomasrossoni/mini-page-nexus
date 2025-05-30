@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Smartphone, Monitor, Plus, GripVertical, Eye, EyeOff } from 'lucide-react';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { PageElement } from '@/contexts/PagesContext';
+import ElementProperties from './ElementProperties';
 
 interface PageEditorProps {
   pageId?: string;
@@ -17,6 +17,7 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
   const [page, setPage] = useState(pageId ? getPage(pageId) : null);
   const [elements, setElements] = useState<PageElement[]>([]);
+  const [selectedElement, setSelectedElement] = useState<PageElement | null>(null);
 
   useEffect(() => {
     if (pageId) {
@@ -79,6 +80,15 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
         }
       });
     }
+
+    // Atualizar elemento selecionado se for o mesmo
+    if (selectedElement && selectedElement.id === id) {
+      setSelectedElement({ ...selectedElement, ...updates });
+    }
+  };
+
+  const selectElement = (element: PageElement) => {
+    setSelectedElement(element);
   };
 
   const renderLandingPagePreview = () => {
@@ -87,23 +97,38 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
     return (
       <div className="w-full h-full bg-white overflow-y-auto">
         {visibleElements.map((element, index) => {
+          const isSelected = selectedElement?.id === element.id;
+          const containerClass = `cursor-pointer transition-all ${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-1 hover:ring-gray-300'}`;
+          
           switch (element.type) {
             case 'headline':
               return (
-                <div key={element.id} className="text-center py-8 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                <div 
+                  key={element.id} 
+                  className={`text-center py-8 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <h1 className="text-4xl font-bold mb-4">{element.content || 'Seu Headline Aqui'}</h1>
                   <p className="text-xl opacity-90">{page?.content.description}</p>
                 </div>
               );
             case 'hero-media':
               return (
-                <div key={element.id} className="w-full h-64 bg-gray-200 flex items-center justify-center">
+                <div 
+                  key={element.id} 
+                  className={`w-full h-64 bg-gray-200 flex items-center justify-center ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <span className="text-gray-500">Área de Mídia (Vídeo/Foto)</span>
                 </div>
               );
             case 'about-section':
               return (
-                <div key={element.id} className="py-16 px-6">
+                <div 
+                  key={element.id} 
+                  className={`py-16 px-6 ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <div className="max-w-4xl mx-auto">
                     <h2 className="text-3xl font-bold text-center mb-8">Sobre Nós</h2>
                     <p className="text-lg text-gray-600 text-center">
@@ -114,7 +139,11 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
               );
             case 'gallery-carousel':
               return (
-                <div key={element.id} className="py-16 px-6 bg-gray-50">
+                <div 
+                  key={element.id} 
+                  className={`py-16 px-6 bg-gray-50 ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <h2 className="text-3xl font-bold text-center mb-8">Galeria</h2>
                   <div className="flex space-x-4 justify-center">
                     {[1,2,3,4].map(i => (
@@ -125,7 +154,11 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
               );
             case 'services-section':
               return (
-                <div key={element.id} className="py-16 px-6">
+                <div 
+                  key={element.id} 
+                  className={`py-16 px-6 ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <h2 className="text-3xl font-bold text-center mb-12">Nossos Serviços</h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {element.data?.services?.map((service, idx) => (
@@ -146,7 +179,11 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
               );
             case 'testimonials':
               return (
-                <div key={element.id} className="py-16 px-6 bg-gray-50">
+                <div 
+                  key={element.id} 
+                  className={`py-16 px-6 bg-gray-50 ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <h2 className="text-3xl font-bold text-center mb-12">Depoimentos</h2>
                   <div className="max-w-4xl mx-auto">
                     {element.data?.testimonials?.map((testimonial, idx) => (
@@ -170,7 +207,11 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
               );
             case 'contact-section':
               return (
-                <div key={element.id} className="py-16 px-6 bg-blue-600 text-white">
+                <div 
+                  key={element.id} 
+                  className={`py-16 px-6 bg-blue-600 text-white ${containerClass}`}
+                  onClick={() => selectElement(element)}
+                >
                   <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-3xl font-bold mb-8">Entre em Contato</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -227,20 +268,24 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
         
         {/* Buttons */}
         <div className="space-y-3 pt-4 max-w-xs mx-auto">
-          {visibleElements.filter(el => el.type === 'button').map((button) => (
-            <button 
-              key={button.id}
-              className={`w-full py-3 rounded-lg font-medium text-white transition-colors ${
-                isClassic ? 'rounded-lg' : 'rounded-none'
-              }`}
-              style={{ 
-                backgroundColor: button.style?.backgroundColor || '#3b82f6',
-                borderRadius: isClassic ? '8px' : '0px'
-              }}
-            >
-              {button.content}
-            </button>
-          ))}
+          {visibleElements.filter(el => el.type === 'button').map((button) => {
+            const isSelected = selectedElement?.id === button.id;
+            return (
+              <button 
+                key={button.id}
+                className={`w-full py-3 rounded-lg font-medium text-white transition-colors cursor-pointer ${
+                  isClassic ? 'rounded-lg' : 'rounded-none'
+                } ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
+                style={{ 
+                  backgroundColor: button.style?.backgroundColor || '#3b82f6',
+                  borderRadius: isClassic ? '8px' : '0px'
+                }}
+                onClick={() => selectElement(button)}
+              >
+                {button.content}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -251,13 +296,13 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
-      {/* Left Panel - Elements & Properties */}
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-200px)]">
+      {/* Left Panel - Elements & Add Elements */}
       <div className="space-y-4 overflow-y-auto">
         <Card>
           <CardContent className="p-4">
             <h3 className="font-semibold mb-4">Adicionar Elementos</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2">
               {page.templateType === 'landing-page' ? (
                 <>
                   <Button variant="outline" size="sm" onClick={() => addElement('headline')}>
@@ -284,6 +329,10 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                     <Plus className="w-4 h-4 mr-2" />
                     Depoimentos
                   </Button>
+                  <Button variant="outline" size="sm" onClick={() => addElement('contact-section')}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Contato
+                  </Button>
                 </>
               ) : (
                 <>
@@ -305,36 +354,70 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
           <CardContent className="p-4">
             <h3 className="font-semibold mb-4">Elementos da Página</h3>
             <div className="space-y-2">
-              {elements.map((element) => (
-                <div key={element.id} className="flex items-center p-2 border rounded-lg">
-                  <GripVertical className="w-4 h-4 text-gray-400 mr-2 cursor-move" />
-                  <div className="flex-1">
-                    <span className="text-sm font-medium capitalize">{element.type.replace('-', ' ')}</span>
-                    {element.content && (
-                      <p className="text-xs text-gray-600 truncate">{element.content}</p>
-                    )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => toggleElementVisibility(element.id)}
+              {elements.map((element) => {
+                const isSelected = selectedElement?.id === element.id;
+                return (
+                  <div 
+                    key={element.id} 
+                    className={`flex items-center p-2 border rounded-lg cursor-pointer transition-colors ${
+                      isSelected ? 'border-blue-500 bg-blue-50' : 'hover:bg-gray-50'
+                    }`}
+                    onClick={() => selectElement(element)}
                   >
-                    {element.visible ? (
-                      <Eye className="w-4 h-4" />
-                    ) : (
-                      <EyeOff className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
-              ))}
+                    <GripVertical className="w-4 h-4 text-gray-400 mr-2 cursor-move" />
+                    <div className="flex-1">
+                      <span className="text-sm font-medium capitalize">{element.type.replace('-', ' ')}</span>
+                      {element.content && (
+                        <p className="text-xs text-gray-600 truncate">{element.content}</p>
+                      )}
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleElementVisibility(element.id);
+                      }}
+                    >
+                      {element.visible ? (
+                        <Eye className="w-4 h-4" />
+                      ) : (
+                        <EyeOff className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4">
-            <h3 className="font-semibold mb-4">Propriedades</h3>
+            <h3 className="font-semibold mb-4">Configurações da Página</h3>
             <div className="space-y-3">
+              <div>
+                <Label htmlFor="pageTitle">Título da Página</Label>
+                <Input
+                  id="pageTitle"
+                  value={page.content.title}
+                  onChange={(e) => updatePage(pageId!, {
+                    content: { ...page.content, title: e.target.value }
+                  })}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="pageDescription">Descrição</Label>
+                <Input
+                  id="pageDescription"
+                  value={page.content.description}
+                  onChange={(e) => updatePage(pageId!, {
+                    content: { ...page.content, description: e.target.value }
+                  })}
+                />
+              </div>
+              
               <div>
                 <Label htmlFor="bgColor">Cor de Fundo</Label>
                 <div className="flex space-x-2">
@@ -385,7 +468,19 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
         </Card>
       </div>
 
-      {/* Center Panel - Preview */}
+      {/* Center Panel - Properties */}
+      <div className="overflow-y-auto">
+        <ElementProperties
+          element={selectedElement}
+          onUpdate={(updates) => {
+            if (selectedElement) {
+              updateElement(selectedElement.id, updates);
+            }
+          }}
+        />
+      </div>
+
+      {/* Right Panel - Preview */}
       <div className="lg:col-span-2">
         <Card className="h-full">
           <CardContent className="p-4 h-full">
