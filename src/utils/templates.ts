@@ -6,6 +6,7 @@ export interface Template {
   name: string;
   description: string;
   preview: string;
+  type: 'landing-page' | 'link-tree';
   content: {
     title: string;
     description: string;
@@ -16,20 +17,531 @@ export interface Template {
 }
 
 export const templates: Template[] = [
+  // LANDING PAGES
   {
     id: 'influencer',
     name: 'Influencer',
-    description: 'Perfeito para criadores de conteúdo e influenciadores digitais',
+    description: 'Landing page completa para criadores de conteúdo',
     preview: 'bg-gradient-to-br from-pink-400 to-purple-500',
+    type: 'landing-page',
     content: {
-      title: 'Seu Nome Aqui',
-      description: 'Criador de conteúdo | Lifestyle | Viagens',
+      title: 'Criador de Conteúdo',
+      description: 'Transformando vidas através do conteúdo',
+      backgroundColor: '#ffffff',
+      textColor: '#1a1a1a',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'Transformando Vidas Através do Conteúdo Digital', 
+          visible: true,
+          style: { fontSize: '48px', fontWeight: 'bold', textColor: '#1a1a1a' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Vídeo de apresentação ou foto principal', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'Olá! Sou um criador de conteúdo apaixonado por compartilhar conhecimento e inspirar pessoas. Com mais de 100k seguidores, minha missão é ajudar você a alcançar seus objetivos através de conteúdo de qualidade.', 
+          visible: true 
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400',
+              'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400',
+              'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { title: 'Consultoria 1:1', description: 'Mentoria personalizada para crescimento', price: 'R$ 297' },
+              { title: 'Curso Online', description: 'Aprenda as estratégias que funcionam', price: 'R$ 197' },
+              { title: 'Ebook Gratuito', description: 'Guia completo para iniciantes', price: 'Grátis' }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Maria Silva', role: 'Empreendedora', content: 'Mudou completamente minha visão sobre negócios digitais!' },
+              { name: 'João Santos', role: 'Freelancer', content: 'Consegui triplicar minha renda em 6 meses.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 99999-9999',
+              email: 'contato@influencer.com',
+              social: [
+                { platform: 'Instagram', url: 'https://instagram.com/influencer' },
+                { platform: 'YouTube', url: 'https://youtube.com/influencer' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    id: 'restaurant',
+    name: 'Restaurante',
+    description: 'Landing page para restaurantes e estabelecimentos',
+    preview: 'bg-gradient-to-br from-orange-400 to-red-500',
+    type: 'landing-page',
+    content: {
+      title: 'Restaurante Sabor & Arte',
+      description: 'Comida caseira com o sabor que você ama',
+      backgroundColor: '#fff8f0',
+      textColor: '#2d1810',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'Sabores Únicos que Despertam Emoções', 
+          visible: true,
+          style: { fontSize: '42px', fontWeight: 'bold', textColor: '#2d1810' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Foto do prato principal ou ambiente', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'Há mais de 15 anos servindo pratos que aquecem o coração. Nossa culinária combina receitas tradicionais com um toque moderno, usando apenas ingredientes frescos e selecionados.', 
+          visible: true 
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400',
+              'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',
+              'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { title: 'Pratos Executivos', description: 'Refeições completas e balanceadas', price: 'A partir de R$ 25' },
+              { title: 'Delivery', description: 'Entrega rápida na sua casa', price: 'Taxa grátis' },
+              { title: 'Eventos', description: 'Buffet para ocasiões especiais', price: 'Sob consulta' }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Ana Costa', role: 'Cliente fiel', content: 'A melhor comida caseira da região!' },
+              { name: 'Carlos Lima', role: 'Empresário', content: 'Sempre peço para meus almoços de trabalho.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 3333-4444',
+              email: 'contato@saborarte.com',
+              address: 'Rua das Flores, 123 - Centro',
+              social: [
+                { platform: 'Instagram', url: 'https://instagram.com/saborarte' },
+                { platform: 'WhatsApp', url: 'https://wa.me/5511333344444' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    id: 'agency',
+    name: 'Agência Digital',
+    description: 'Landing page para agências e empresas de serviços',
+    preview: 'bg-gradient-to-br from-blue-400 to-indigo-500',
+    type: 'landing-page',
+    content: {
+      title: 'Digital Solutions',
+      description: 'Transformamos sua visão em realidade digital',
+      backgroundColor: '#f8fafc',
+      textColor: '#1e293b',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'Transformamos Sua Visão em Realidade Digital', 
+          visible: true,
+          style: { fontSize: '46px', fontWeight: 'bold', textColor: '#1e293b' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Vídeo institucional ou imagem da equipe', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'Somos uma agência digital especializada em criar soluções inovadoras para empresas que querem se destacar no mercado. Com mais de 200 projetos entregues, nossa equipe combina criatividade e tecnologia.', 
+          visible: true 
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400',
+              'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400',
+              'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { title: 'Sites Profissionais', description: 'Desenvolvimento web responsivo', price: 'A partir de R$ 2.997' },
+              { title: 'Marketing Digital', description: 'Estratégias completas de crescimento', price: 'A partir de R$ 1.500/mês' },
+              { title: 'Identidade Visual', description: 'Branding completo para sua marca', price: 'A partir de R$ 997' }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Ricardo Almeida', role: 'CEO TechStart', content: 'Aumentamos 300% nosso faturamento em 6 meses!' },
+              { name: 'Fernanda Torres', role: 'Diretora Marketing', content: 'Equipe muito profissional e resultados incríveis.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 5555-6666',
+              email: 'contato@digitalsolutions.com',
+              address: 'Av. Paulista, 1000 - São Paulo',
+              social: [
+                { platform: 'LinkedIn', url: 'https://linkedin.com/company/digitalsolutions' },
+                { platform: 'Instagram', url: 'https://instagram.com/digitalsolutions' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    id: 'digital-product',
+    name: 'Produto Digital',
+    description: 'Landing page para vendas de cursos e infoprodutos',
+    preview: 'bg-gradient-to-br from-green-400 to-emerald-500',
+    type: 'landing-page',
+    content: {
+      title: 'Curso Completo de Marketing Digital',
+      description: 'Aprenda as estratégias que realmente funcionam',
+      backgroundColor: '#f0fdf4',
+      textColor: '#14532d',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'Domine o Marketing Digital em 30 Dias', 
+          visible: true,
+          style: { fontSize: '44px', fontWeight: 'bold', textColor: '#14532d' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Vídeo de vendas ou preview do curso', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'Este curso foi desenvolvido para quem quer dominar o marketing digital do zero ao avançado. Mais de 50 horas de conteúdo prático com estratégias testadas e aprovadas por milhares de alunos.', 
+          visible: true 
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400',
+              'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400',
+              'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { title: 'Módulo 1: Fundamentos', description: '10 aulas sobre bases do marketing', price: 'Incluído' },
+              { title: 'Módulo 2: Tráfego Pago', description: 'Estratégias de anúncios que convertem', price: 'Incluído' },
+              { title: 'Bônus: Templates', description: 'Materiais prontos para usar', price: 'Grátis' }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Paulo Mendes', role: 'Empreendedor', content: 'Faturei R$ 50k no primeiro mês aplicando o método!' },
+              { name: 'Laura Santos', role: 'Freelancer', content: 'Curso mais completo que já fiz na área.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 7777-8888',
+              email: 'suporte@marketingcourse.com',
+              social: [
+                { platform: 'Instagram', url: 'https://instagram.com/marketingcourse' },
+                { platform: 'WhatsApp', url: 'https://wa.me/5511777788888' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    id: 'event',
+    name: 'Evento',
+    description: 'Landing page para eventos, workshops e palestras',
+    preview: 'bg-gradient-to-br from-purple-400 to-pink-500',
+    type: 'landing-page',
+    content: {
+      title: 'Summit de Inovação 2024',
+      description: 'O maior evento de tecnologia e inovação do país',
+      backgroundColor: '#fdf4ff',
+      textColor: '#581c87',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'Summit de Inovação 2024: O Futuro Começa Aqui', 
+          visible: true,
+          style: { fontSize: '40px', fontWeight: 'bold', textColor: '#581c87' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Vídeo promocional do evento', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'Dois dias intensos de palestras, workshops e networking com os maiores nomes da tecnologia nacional e internacional. Mais de 50 palestrantes e 3000 participantes esperados.', 
+          visible: true 
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400',
+              'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400',
+              'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { title: 'Ingresso Individual', description: 'Acesso completo aos 2 dias', price: 'R$ 297' },
+              { title: 'Ingresso Premium', description: 'Acesso + networking VIP', price: 'R$ 497' },
+              { title: 'Ingresso Corporativo', description: 'Para equipes (5+ pessoas)', price: 'R$ 197/pessoa' }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Roberto Silva', role: 'CTO inovaTech', content: 'Evento transformador! Networking incrível.' },
+              { name: 'Marina Costa', role: 'Founder StartupX', content: 'Conhecimento de altíssimo nível, vale cada centavo.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 9999-0000',
+              email: 'contato@summitinovacao.com',
+              address: 'Centro de Convenções - São Paulo',
+              social: [
+                { platform: 'LinkedIn', url: 'https://linkedin.com/summitinovacao' },
+                { platform: 'Instagram', url: 'https://instagram.com/summitinovacao' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    id: 'health',
+    name: 'Profissional da Saúde',
+    description: 'Landing page para médicos, dentistas e especialistas',
+    preview: 'bg-gradient-to-br from-teal-400 to-cyan-500',
+    type: 'landing-page',
+    content: {
+      title: 'Dra. Ana Silva - Dermatologista',
+      description: 'Cuidando da sua pele com excelência e dedicação',
+      backgroundColor: '#f0fdfa',
+      textColor: '#134e4a',
+      elements: [
+        { 
+          id: '1', 
+          type: 'headline', 
+          content: 'Sua Pele Merece o Melhor Cuidado', 
+          visible: true,
+          style: { fontSize: '42px', fontWeight: 'bold', textColor: '#134e4a' }
+        },
+        { 
+          id: '2', 
+          type: 'hero-media', 
+          content: 'Foto da doutora ou do consultório', 
+          visible: true 
+        },
+        { 
+          id: '3', 
+          type: 'about-section', 
+          content: 'Dra. Ana Silva é dermatologista formada pela USP com especialização em dermatologia estética. Mais de 10 anos de experiência no tratamento de problemas de pele e procedimentos estéticos avançados.', 
+          visible: true 
+        },
+        { 
+          id: '4', 
+          type: 'gallery-carousel', 
+          visible: true,
+          data: {
+            images: [
+              'https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400',
+              'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=400',
+              'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400'
+            ]
+          }
+        },
+        { 
+          id: '5', 
+          type: 'services-section', 
+          visible: true,
+          data: {
+            services: [
+              { title: 'Consulta Dermatológica', description: 'Avaliação completa da pele', price: 'R$ 200' },
+              { title: 'Botox', description: 'Tratamento de rugas e linhas', price: 'A partir de R$ 400' },
+              { title: 'Limpeza de Pele', description: 'Tratamento profissional completo', price: 'R$ 150' }
+            ]
+          }
+        },
+        { 
+          id: '6', 
+          type: 'testimonials', 
+          visible: true,
+          data: {
+            testimonials: [
+              { name: 'Julia Oliveira', role: 'Paciente', content: 'Profissional excepcional! Minha pele nunca esteve tão bonita.' },
+              { name: 'Marcos Pereira', role: 'Paciente', content: 'Atendimento humanizado e resultados incríveis.' }
+            ]
+          }
+        },
+        { 
+          id: '7', 
+          type: 'contact-section', 
+          visible: true,
+          data: {
+            contact: {
+              phone: '+55 11 2222-3333',
+              email: 'contato@draanasilva.com',
+              address: 'Av. Faria Lima, 500 - Sala 1205',
+              social: [
+                { platform: 'Instagram', url: 'https://instagram.com/draanasilva' },
+                { platform: 'WhatsApp', url: 'https://wa.me/5511222233333' }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  // ÁRVORE DE LINKS
+  {
+    id: 'link-tree',
+    name: 'Árvore de Links',
+    description: 'Página de links simples estilo Linktree',
+    preview: 'bg-gradient-to-br from-green-400 to-blue-500',
+    type: 'link-tree',
+    content: {
+      title: 'Meus Links',
+      description: 'Todos os meus links em um só lugar',
       backgroundColor: '#ffffff',
       textColor: '#1a1a1a',
       elements: [
         { id: '1', type: 'profile', visible: true },
-        { id: '2', type: 'title', content: 'Seu Nome Aqui', visible: true },
-        { id: '3', type: 'description', content: 'Criador de conteúdo | Lifestyle | Viagens', visible: true },
+        { id: '2', type: 'title', content: 'Meus Links', visible: true },
+        { id: '3', type: 'description', content: 'Todos os meus links em um só lugar', visible: true },
         { 
           id: '4', 
           type: 'button', 
@@ -41,223 +553,26 @@ export const templates: Template[] = [
         { 
           id: '5', 
           type: 'button', 
-          content: '🎵 TikTok', 
-          url: 'https://tiktok.com/@seuusuario', 
+          content: '💼 LinkedIn', 
+          url: 'https://linkedin.com/in/seuusuario', 
           visible: true,
-          style: { backgroundColor: '#000000', textColor: '#ffffff' }
+          style: { backgroundColor: '#0077B5', textColor: '#ffffff' }
         },
         { 
           id: '6', 
+          type: 'button', 
+          content: '🎵 Spotify', 
+          url: 'https://open.spotify.com/user/seuusuario', 
+          visible: true,
+          style: { backgroundColor: '#1DB954', textColor: '#ffffff' }
+        },
+        { 
+          id: '7', 
           type: 'button', 
           content: '💬 WhatsApp', 
           url: 'https://wa.me/5511999999999', 
           visible: true,
           style: { backgroundColor: '#25D366', textColor: '#ffffff' }
-        }
-      ]
-    }
-  },
-  {
-    id: 'restaurant',
-    name: 'Restaurante',
-    description: 'Ideal para restaurantes, cafés e estabelecimentos alimentícios',
-    preview: 'bg-gradient-to-br from-orange-400 to-red-500',
-    content: {
-      title: 'Restaurante Sabor & Arte',
-      description: 'Comida caseira com o sabor que você ama 🍽️',
-      backgroundColor: '#fff8f0',
-      textColor: '#2d1810',
-      elements: [
-        { id: '1', type: 'profile', visible: true },
-        { id: '2', type: 'title', content: 'Restaurante Sabor & Arte', visible: true },
-        { id: '3', type: 'description', content: 'Comida caseira com o sabor que você ama 🍽️', visible: true },
-        { 
-          id: '4', 
-          type: 'button', 
-          content: '📱 Fazer Pedido - WhatsApp', 
-          url: 'https://wa.me/5511999999999', 
-          visible: true,
-          style: { backgroundColor: '#25D366', textColor: '#ffffff' }
-        },
-        { 
-          id: '5', 
-          type: 'button', 
-          content: '🍕 Cardápio Completo', 
-          url: 'https://cardapio.com', 
-          visible: true,
-          style: { backgroundColor: '#ff6b35', textColor: '#ffffff' }
-        },
-        { 
-          id: '6', 
-          type: 'button', 
-          content: '📍 Nossa Localização', 
-          url: 'https://maps.google.com', 
-          visible: true,
-          style: { backgroundColor: '#4285f4', textColor: '#ffffff' }
-        }
-      ]
-    }
-  },
-  {
-    id: 'agency',
-    name: 'Agência',
-    description: 'Para agências digitais e empresas de serviços',
-    preview: 'bg-gradient-to-br from-blue-400 to-indigo-500',
-    content: {
-      title: 'Digital Solutions',
-      description: 'Transformamos sua visão em realidade digital',
-      backgroundColor: '#f8fafc',
-      textColor: '#1e293b',
-      elements: [
-        { id: '1', type: 'profile', visible: true },
-        { id: '2', type: 'title', content: 'Digital Solutions', visible: true },
-        { id: '3', type: 'description', content: 'Transformamos sua visão em realidade digital', visible: true },
-        { 
-          id: '4', 
-          type: 'button', 
-          content: '💼 Nossos Serviços', 
-          url: 'https://servicos.com', 
-          visible: true,
-          style: { backgroundColor: '#3b82f6', textColor: '#ffffff' }
-        },
-        { 
-          id: '5', 
-          type: 'button', 
-          content: '📊 Portfólio', 
-          url: 'https://portfolio.com', 
-          visible: true,
-          style: { backgroundColor: '#6366f1', textColor: '#ffffff' }
-        },
-        { 
-          id: '6', 
-          type: 'button', 
-          content: '📞 Orçamento Gratuito', 
-          url: 'https://wa.me/5511999999999', 
-          visible: true,
-          style: { backgroundColor: '#25D366', textColor: '#ffffff' }
-        }
-      ]
-    }
-  },
-  {
-    id: 'digital-product',
-    name: 'Produto Digital',
-    description: 'Vendas de cursos, ebooks e produtos digitais',
-    preview: 'bg-gradient-to-br from-green-400 to-emerald-500',
-    content: {
-      title: 'Curso Completo de Marketing',
-      description: 'Aprenda as estratégias que realmente funcionam 🚀',
-      backgroundColor: '#f0fdf4',
-      textColor: '#14532d',
-      elements: [
-        { id: '1', type: 'profile', visible: true },
-        { id: '2', type: 'title', content: 'Curso Completo de Marketing', visible: true },
-        { id: '3', type: 'description', content: 'Aprenda as estratégias que realmente funcionam 🚀', visible: true },
-        { 
-          id: '4', 
-          type: 'button', 
-          content: '🎯 Comprar Agora - 50% OFF', 
-          url: 'https://checkout.com', 
-          visible: true,
-          style: { backgroundColor: '#dc2626', textColor: '#ffffff' }
-        },
-        { 
-          id: '5', 
-          type: 'button', 
-          content: '📹 Assistir Preview', 
-          url: 'https://youtube.com/preview', 
-          visible: true,
-          style: { backgroundColor: '#16a34a', textColor: '#ffffff' }
-        },
-        { 
-          id: '6', 
-          type: 'button', 
-          content: '💬 Tirar Dúvidas', 
-          url: 'https://wa.me/5511999999999', 
-          visible: true,
-          style: { backgroundColor: '#25D366', textColor: '#ffffff' }
-        }
-      ]
-    }
-  },
-  {
-    id: 'event',
-    name: 'Evento',
-    description: 'Divulgação de eventos, workshops e palestras',
-    preview: 'bg-gradient-to-br from-purple-400 to-pink-500',
-    content: {
-      title: 'Workshop de Inovação 2024',
-      description: 'O futuro dos negócios começa aqui! 🚀',
-      backgroundColor: '#fdf4ff',
-      textColor: '#581c87',
-      elements: [
-        { id: '1', type: 'profile', visible: true },
-        { id: '2', type: 'title', content: 'Workshop de Inovação 2024', visible: true },
-        { id: '3', type: 'description', content: 'O futuro dos negócios começa aqui! 🚀', visible: true },
-        { 
-          id: '4', 
-          type: 'button', 
-          content: '🎟️ Garantir Minha Vaga', 
-          url: 'https://inscricoes.com', 
-          visible: true,
-          style: { backgroundColor: '#a855f7', textColor: '#ffffff' }
-        },
-        { 
-          id: '5', 
-          type: 'button', 
-          content: '📅 Programação Completa', 
-          url: 'https://programacao.com', 
-          visible: true,
-          style: { backgroundColor: '#ec4899', textColor: '#ffffff' }
-        },
-        { 
-          id: '6', 
-          type: 'button', 
-          content: '📍 Local do Evento', 
-          url: 'https://maps.google.com', 
-          visible: true,
-          style: { backgroundColor: '#4285f4', textColor: '#ffffff' }
-        }
-      ]
-    }
-  },
-  {
-    id: 'health',
-    name: 'Profissional da Saúde',
-    description: 'Médicos, dentistas, fisioterapeutas e estética',
-    preview: 'bg-gradient-to-br from-teal-400 to-cyan-500',
-    content: {
-      title: 'Dr. Ana Silva',
-      description: 'Dermatologista | CRM 12345 | Cuidando da sua pele ✨',
-      backgroundColor: '#f0fdfa',
-      textColor: '#134e4a',
-      elements: [
-        { id: '1', type: 'profile', visible: true },
-        { id: '2', type: 'title', content: 'Dr. Ana Silva', visible: true },
-        { id: '3', type: 'description', content: 'Dermatologista | CRM 12345 | Cuidando da sua pele ✨', visible: true },
-        { 
-          id: '4', 
-          type: 'button', 
-          content: '📅 Agendar Consulta', 
-          url: 'https://agendamento.com', 
-          visible: true,
-          style: { backgroundColor: '#0d9488', textColor: '#ffffff' }
-        },
-        { 
-          id: '5', 
-          type: 'button', 
-          content: '💬 WhatsApp Consultório', 
-          url: 'https://wa.me/5511999999999', 
-          visible: true,
-          style: { backgroundColor: '#25D366', textColor: '#ffffff' }
-        },
-        { 
-          id: '6', 
-          type: 'button', 
-          content: '📍 Como Chegar', 
-          url: 'https://maps.google.com', 
-          visible: true,
-          style: { backgroundColor: '#06b6d4', textColor: '#ffffff' }
         }
       ]
     }

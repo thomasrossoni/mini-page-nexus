@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Palette, Smartphone, Globe, Shield, Zap, BarChart3, Link } from 'lucide-react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { templates, getTemplate } from '@/utils/templates';
 import { toast } from 'sonner';
@@ -32,8 +33,12 @@ const CreatePage = () => {
     'agency': <Globe className="w-8 h-8" />,
     'digital-product': <BarChart3 className="w-8 h-8" />,
     'event': <Zap className="w-8 h-8" />,
-    'health': <Shield className="w-8 h-8" />
+    'health': <Shield className="w-8 h-8" />,
+    'link-tree': <Link className="w-8 h-8" />
   };
+
+  const landingPageTemplates = templates.filter(t => t.type === 'landing-page');
+  const linkTreeTemplates = templates.filter(t => t.type === 'link-tree');
 
   const handleCreate = () => {
     if (!selectedTemplate || !pageName || !pageUrl) {
@@ -53,6 +58,7 @@ const CreatePage = () => {
         url: pageUrl,
         domain: selectedDomain,
         template: template.name,
+        templateType: template.type,
         status: 'draft',
         content: {
           ...template.content,
@@ -72,31 +78,36 @@ const CreatePage = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center mb-8">
-          <Link to="/dashboard">
+          <RouterLink to="/dashboard">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
-          </Link>
+          </RouterLink>
           <div className="ml-4">
             <h1 className="text-3xl font-bold text-gray-900">Criar Nova Página</h1>
-            <p className="text-gray-600 mt-2">Escolha um template e configure sua nova landing page</p>
+            <p className="text-gray-600 mt-2">Escolha entre Landing Pages completas ou Árvore de Links</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Template Selection */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-8">
+            {/* Landing Pages */}
             <Card>
               <CardHeader>
-                <CardTitle>Escolha um Template</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  Landing Pages Completas
+                  <Badge variant="outline">Recomendado</Badge>
+                </CardTitle>
                 <CardDescription>
-                  Selecione o modelo que melhor se adapta ao seu negócio
+                  Páginas profissionais com seções completas: hero, sobre, serviços, depoimentos e contato
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {templates.map((template) => (
+                  {landingPageTemplates.map((template) => (
                     <div
                       key={template.id}
                       onClick={() => setSelectedTemplate(template.id)}
@@ -108,6 +119,44 @@ const CreatePage = () => {
                     >
                       <div className="flex items-start space-x-3">
                         <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white">
+                          {iconMap[template.id]}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900">{template.name}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{template.description}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Link Tree */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Link className="w-5 h-5" />
+                  Árvore de Links
+                </CardTitle>
+                <CardDescription>
+                  Página simples com perfil e botões de links, similar ao Linktree
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {linkTreeTemplates.map((template) => (
+                    <div
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template.id)}
+                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all hover:shadow-md ${
+                        selectedTemplate === template.id
+                          ? 'border-blue-500 bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex items-start space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-lg flex items-center justify-center text-white">
                           {iconMap[template.id]}
                         </div>
                         <div className="flex-1">
@@ -136,7 +185,7 @@ const CreatePage = () => {
                   <Label htmlFor="pageName">Nome da Página *</Label>
                   <Input
                     id="pageName"
-                    placeholder="Ex: Minha Loja Online"
+                    placeholder="Ex: Minha Empresa"
                     value={pageName}
                     onChange={(e) => setPageName(e.target.value)}
                   />
@@ -191,24 +240,44 @@ const CreatePage = () => {
                       const template = getTemplate(selectedTemplate);
                       if (!template) return <span className="text-gray-500">Template não encontrado</span>;
                       
-                      return (
-                        <div className="w-full h-full p-4 flex flex-col items-center justify-start bg-white">
-                          <div className="w-16 h-16 bg-gray-300 rounded-full mb-3"></div>
-                          <h3 className="font-bold text-lg mb-2 text-center">{pageName || template.content.title}</h3>
-                          <p className="text-sm text-gray-600 mb-4 text-center">{template.content.description}</p>
-                          <div className="space-y-2 w-full max-w-xs">
-                            {template.content.elements.filter(el => el.type === 'button').slice(0, 3).map((button, index) => (
-                              <div 
-                                key={index}
-                                className="w-full h-8 rounded text-xs flex items-center justify-center text-white"
-                                style={{ backgroundColor: button.style?.backgroundColor || '#3b82f6' }}
-                              >
-                                {button.content}
+                      if (template.type === 'landing-page') {
+                        return (
+                          <div className="w-full h-full p-4 flex flex-col bg-white text-xs">
+                            <div className="text-center mb-3">
+                              <h3 className="font-bold text-sm mb-1">{pageName || template.content.title}</h3>
+                              <div className="w-full h-12 bg-gray-300 rounded mb-2"></div>
+                            </div>
+                            <div className="space-y-2 flex-1">
+                              <div className="h-3 bg-gray-200 rounded"></div>
+                              <div className="h-8 bg-gray-100 rounded"></div>
+                              <div className="grid grid-cols-2 gap-1">
+                                <div className="h-6 bg-gray-200 rounded"></div>
+                                <div className="h-6 bg-gray-200 rounded"></div>
                               </div>
-                            ))}
+                              <div className="h-6 bg-blue-100 rounded"></div>
+                            </div>
                           </div>
-                        </div>
-                      );
+                        );
+                      } else {
+                        return (
+                          <div className="w-full h-full p-4 flex flex-col items-center justify-start bg-white">
+                            <div className="w-16 h-16 bg-gray-300 rounded-full mb-3"></div>
+                            <h3 className="font-bold text-lg mb-2 text-center">{pageName || template.content.title}</h3>
+                            <p className="text-sm text-gray-600 mb-4 text-center">{template.content.description}</p>
+                            <div className="space-y-2 w-full max-w-xs">
+                              {template.content.elements.filter(el => el.type === 'button').slice(0, 3).map((button, index) => (
+                                <div 
+                                  key={index}
+                                  className="w-full h-8 rounded text-xs flex items-center justify-center text-white"
+                                  style={{ backgroundColor: button.style?.backgroundColor || '#3b82f6' }}
+                                >
+                                  {button.content}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
                     })()}
                   </div>
                 </CardContent>

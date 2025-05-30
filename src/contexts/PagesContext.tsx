@@ -7,6 +7,7 @@ interface Page {
   url: string;
   domain: string;
   template: string;
+  templateType: 'landing-page' | 'link-tree';
   status: 'published' | 'draft';
   createdAt: Date;
   lastEdited: Date;
@@ -24,7 +25,9 @@ interface Page {
 
 export interface PageElement {
   id: string;
-  type: 'profile' | 'title' | 'description' | 'button' | 'text' | 'image' | 'divider';
+  type: 'profile' | 'title' | 'description' | 'button' | 'text' | 'image' | 'divider' | 
+        'headline' | 'hero-media' | 'about-section' | 'gallery-carousel' | 'services-section' | 
+        'testimonials' | 'contact-section';
   content?: string;
   url?: string;
   visible: boolean;
@@ -32,6 +35,38 @@ export interface PageElement {
     backgroundColor?: string;
     textColor?: string;
     borderRadius?: string;
+    fontSize?: string;
+    fontWeight?: string;
+    padding?: string;
+    margin?: string;
+  };
+  data?: {
+    // Para carrossel de imagens
+    images?: string[];
+    // Para seção de serviços
+    services?: Array<{
+      title: string;
+      description: string;
+      price?: string;
+      icon?: string;
+    }>;
+    // Para depoimentos
+    testimonials?: Array<{
+      name: string;
+      role: string;
+      content: string;
+      avatar?: string;
+    }>;
+    // Para informações de contato
+    contact?: {
+      phone?: string;
+      email?: string;
+      address?: string;
+      social?: Array<{
+        platform: string;
+        url: string;
+      }>;
+    };
   };
 }
 
@@ -57,24 +92,25 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const [pages, setPages] = useState<Page[]>([
     {
       id: '1',
-      name: 'Minha Loja Online',
-      url: 'minha-loja',
+      name: 'Minha Árvore de Links',
+      url: 'minha-arvore',
       domain: 'meuslinks.app',
-      template: 'Produto Digital',
+      template: 'Árvore de Links',
+      templateType: 'link-tree',
       status: 'published',
       createdAt: new Date('2024-01-15'),
       lastEdited: new Date(),
       views: 156,
       clicks: 23,
       content: {
-        title: 'Minha Loja Online',
-        description: 'Os melhores produtos com entrega rápida',
+        title: 'Minha Árvore de Links',
+        description: 'Todos os meus links em um só lugar',
         backgroundColor: '#ffffff',
         textColor: '#000000',
         elements: [
           { id: '1', type: 'profile', visible: true },
-          { id: '2', type: 'title', content: 'Minha Loja Online', visible: true },
-          { id: '3', type: 'description', content: 'Os melhores produtos com entrega rápida', visible: true },
+          { id: '2', type: 'title', content: 'Minha Árvore de Links', visible: true },
+          { id: '3', type: 'description', content: 'Todos os meus links em um só lugar', visible: true },
           { id: '4', type: 'button', content: 'WhatsApp', url: 'https://wa.me/5511999999999', visible: true, style: { backgroundColor: '#25D366' } },
           { id: '5', type: 'button', content: 'Instagram', url: 'https://instagram.com/minhaloja', visible: true, style: { backgroundColor: '#E4405F' } },
         ]
