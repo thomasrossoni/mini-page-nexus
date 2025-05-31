@@ -1,12 +1,12 @@
-
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Image as ImageIcon } from 'lucide-react';
 import { PageElement } from '@/contexts/PagesContext';
+import ImageUpload from './ImageUpload';
 
 interface ElementPropertiesProps {
   element: PageElement | null;
@@ -48,6 +48,31 @@ const ElementProperties = ({ element, onUpdate }: ElementPropertiesProps) => {
         [field]: value
       }
     });
+  };
+
+  const handleImageChange = (imageUrl: string) => {
+    onUpdate({
+      data: {
+        ...element.data,
+        profileImage: imageUrl
+      }
+    });
+  };
+
+  const updateServiceImage = (index: number, imageUrl: string) => {
+    const currentServices = element.data?.services || [];
+    const updatedServices = currentServices.map((service, i) => 
+      i === index ? { ...service, image: imageUrl } : service
+    );
+    handleDataChange('services', updatedServices);
+  };
+
+  const updateTestimonialAvatar = (index: number, imageUrl: string) => {
+    const currentTestimonials = element.data?.testimonials || [];
+    const updatedTestimonials = currentTestimonials.map((testimonial, i) => 
+      i === index ? { ...testimonial, avatar: imageUrl } : testimonial
+    );
+    handleDataChange('testimonials', updatedTestimonials);
   };
 
   const addService = () => {
@@ -102,6 +127,15 @@ const ElementProperties = ({ element, onUpdate }: ElementPropertiesProps) => {
       <CardContent className="p-4 space-y-4">
         <h3 className="font-semibold">Propriedades do Elemento</h3>
         
+        {/* Upload de imagem para perfil */}
+        {(element.type === 'profile' || element.type === 'hero-media') && (
+          <ImageUpload
+            currentImage={element.data?.profileImage}
+            onImageChange={handleImageChange}
+            label={element.type === 'profile' ? 'Foto de Perfil' : 'Imagem/Vídeo Principal'}
+          />
+        )}
+
         {/* Conteúdo básico */}
         {(element.type === 'button' || element.type === 'text' || element.type === 'headline' || element.type === 'about-section') && (
           <div>
@@ -203,6 +237,12 @@ const ElementProperties = ({ element, onUpdate }: ElementPropertiesProps) => {
                   </Button>
                 </div>
                 
+                <ImageUpload
+                  currentImage={service.image}
+                  onImageChange={(imageUrl) => updateServiceImage(index, imageUrl)}
+                  label="Imagem do Serviço"
+                />
+                
                 <Input
                   placeholder="Título do serviço"
                   value={service.title}
@@ -247,6 +287,12 @@ const ElementProperties = ({ element, onUpdate }: ElementPropertiesProps) => {
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
+                
+                <ImageUpload
+                  currentImage={testimonial.avatar}
+                  onImageChange={(imageUrl) => updateTestimonialAvatar(index, imageUrl)}
+                  label="Avatar"
+                />
                 
                 <Input
                   placeholder="Nome da pessoa"

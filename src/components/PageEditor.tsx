@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -119,7 +120,15 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                   className={`w-full h-64 bg-gray-200 flex items-center justify-center ${containerClass}`}
                   onClick={() => selectElement(element)}
                 >
-                  <span className="text-gray-500">Área de Mídia (Vídeo/Foto)</span>
+                  {element.data?.profileImage ? (
+                    <img 
+                      src={element.data.profileImage} 
+                      alt="Hero media" 
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-gray-500">Área de Mídia (Vídeo/Foto)</span>
+                  )}
                 </div>
               );
             case 'about-section':
@@ -163,6 +172,13 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                     {element.data?.services?.map((service, idx) => (
                       <div key={idx} className="text-center p-6 border rounded-lg">
+                        {service.image && (
+                          <img 
+                            src={service.image} 
+                            alt={service.title}
+                            className="w-16 h-16 object-cover rounded mx-auto mb-4"
+                          />
+                        )}
                         <h3 className="text-xl font-semibold mb-4">{service.title}</h3>
                         <p className="text-gray-600 mb-4">{service.description}</p>
                         {service.price && (
@@ -190,7 +206,17 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                       <div key={idx} className="bg-white p-6 rounded-lg shadow mb-6">
                         <p className="text-gray-600 mb-4">"{testimonial.content}"</p>
                         <div className="flex items-center">
-                          <div className="w-12 h-12 bg-gray-300 rounded-full mr-4"></div>
+                          <div className="w-12 h-12 rounded-full mr-4 overflow-hidden">
+                            {testimonial.avatar ? (
+                              <img 
+                                src={testimonial.avatar} 
+                                alt={testimonial.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-300"></div>
+                            )}
+                          </div>
                           <div>
                             <p className="font-semibold">{testimonial.name}</p>
                             <p className="text-sm text-gray-500">{testimonial.role}</p>
@@ -242,11 +268,22 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
   const renderLinkTreePreview = () => {
     const visibleElements = elements.filter(el => el.visible);
     const isClassic = page?.template === 'Árvore de Links Clássica';
+    const profileElement = visibleElements.find(el => el.type === 'profile');
     
     return (
       <div className={`w-full h-full p-6 text-center space-y-4 ${isClassic ? 'bg-white' : 'bg-gray-50'}`}>
         {/* Profile Image */}
-        <div className="w-24 h-24 bg-gray-200 rounded-full mx-auto"></div>
+        <div className="w-24 h-24 rounded-full mx-auto overflow-hidden">
+          {profileElement?.data?.profileImage ? (
+            <img 
+              src={profileElement.data.profileImage} 
+              alt="Profile" 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200"></div>
+          )}
+        </div>
         
         {/* Title */}
         <h2 className={`text-2xl font-bold ${isClassic ? 'text-black' : 'text-gray-800'}`}>

@@ -41,6 +41,8 @@ export interface PageElement {
     margin?: string;
   };
   data?: {
+    // Para imagens gerais
+    profileImage?: string;
     // Para carrossel de imagens
     images?: string[];
     // Para seção de serviços
@@ -49,6 +51,7 @@ export interface PageElement {
       description: string;
       price?: string;
       icon?: string;
+      image?: string;
     }>;
     // Para depoimentos
     testimonials?: Array<{
@@ -108,7 +111,7 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
         backgroundColor: '#ffffff',
         textColor: '#000000',
         elements: [
-          { id: '1', type: 'profile', visible: true },
+          { id: '1', type: 'profile', visible: true, data: { profileImage: '' } },
           { id: '2', type: 'title', content: 'Minha Árvore de Links', visible: true },
           { id: '3', type: 'description', content: 'Todos os meus links em um só lugar', visible: true },
           { id: '4', type: 'button', content: 'WhatsApp', url: 'https://wa.me/5511999999999', visible: true, style: { backgroundColor: '#25D366' } },
