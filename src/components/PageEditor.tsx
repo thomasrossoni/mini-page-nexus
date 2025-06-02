@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,10 +24,37 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
       const pageData = getPage(pageId);
       if (pageData) {
         setPage(pageData);
-        setElements(pageData.content.elements);
+        
+        // Garantir que os elementos existam e tenham estrutura correta
+        const pageElements = pageData.content?.elements || [];
+        
+        // Se não há elementos e é um link tree, criar elemento de perfil padrão
+        if (pageElements.length === 0 && pageData.templateType === 'link-tree') {
+          const defaultProfileElement: PageElement = {
+            id: 'profile-default',
+            type: 'profile',
+            content: pageData.content?.title || pageData.name,
+            visible: true,
+            data: {
+              profileImage: null
+            }
+          };
+          const initialElements = [defaultProfileElement];
+          setElements(initialElements);
+          
+          // Atualizar a página com os elementos padrão
+          updatePage(pageId, {
+            content: {
+              ...pageData.content,
+              elements: initialElements
+            }
+          });
+        } else {
+          setElements(pageElements);
+        }
       }
     }
-  }, [pageId, getPage]);
+  }, [pageId, getPage, updatePage]);
 
   const addElement = (type: string) => {
     const newElement: PageElement = {
@@ -110,7 +136,7 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                   onClick={() => selectElement(element)}
                 >
                   <h1 className="text-4xl font-bold mb-4">{element.content || 'Seu Headline Aqui'}</h1>
-                  <p className="text-xl opacity-90">{page?.content.description}</p>
+                  <p className="text-xl opacity-90">{page?.content?.description}</p>
                 </div>
               );
             case 'hero-media':
@@ -271,9 +297,12 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
     const profileElement = visibleElements.find(el => el.type === 'profile');
     
     return (
-      <div className={`w-full h-full p-6 text-center space-y-4 ${isClassic ? 'bg-white' : 'bg-gray-50'}`}>
+      <div 
+        className={`w-full h-full p-6 text-center space-y-4 overflow-y-auto ${isClassic ? 'bg-white' : 'bg-gray-50'}`}
+        style={{ backgroundColor: page?.content?.backgroundColor || (isClassic ? '#ffffff' : '#f9fafb') }}
+      >
         {/* Profile Image */}
-        <div className="w-24 h-24 rounded-full mx-auto overflow-hidden">
+        <div className="w-24 h-24 rounded-full mx-auto overflow-hidden bg-gray-200">
           {profileElement?.data?.profileImage ? (
             <img 
               src={profileElement.data.profileImage} 
@@ -281,18 +310,23 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-200"></div>
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400 text-xs">Foto</span>
+            </div>
           )}
         </div>
         
         {/* Title */}
-        <h2 className={`text-2xl font-bold ${isClassic ? 'text-black' : 'text-gray-800'}`}>
-          {page?.content.title || 'Título'}
+        <h2 
+          className={`text-2xl font-bold ${isClassic ? 'text-black' : 'text-gray-800'}`}
+          style={{ color: page?.content?.textColor }}
+        >
+          {page?.content?.title || profileElement?.content || 'Título'}
         </h2>
         
         {/* Description */}
         <p className={`${isClassic ? 'text-gray-600' : 'text-gray-600'}`}>
-          {page?.content.description || 'Descrição'}
+          {page?.content?.description || 'Descrição'}
         </p>
         
         {!isClassic && (
@@ -310,7 +344,7 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
             return (
               <button 
                 key={button.id}
-                className={`w-full py-3 rounded-lg font-medium text-white transition-colors cursor-pointer ${
+                className={`w-full py-3 font-medium text-white transition-colors cursor-pointer ${
                   isClassic ? 'rounded-lg' : 'rounded-none'
                 } ${isSelected ? 'ring-2 ring-blue-500' : ''}`}
                 style={{ 
@@ -319,7 +353,7 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                 }}
                 onClick={() => selectElement(button)}
               >
-                {button.content}
+                {button.content || 'Novo Botão'}
               </button>
             );
           })}

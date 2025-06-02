@@ -178,18 +178,24 @@ const PublicPage = () => {
   };
 
   const renderLinkTree = () => {
-    const visibleElements = page.content.elements.filter(el => el.visible);
+    // Garantir que elementos existem
+    const elements = page.content?.elements || [];
+    const visibleElements = elements.filter(el => el.visible);
+    
     const isClassic = page.template === 'Árvore de Links Clássica';
     const profileElement = visibleElements.find(el => el.type === 'profile');
+    
+    // Se não há elementos visíveis, mostrar estrutura básica
+    const hasButtons = visibleElements.some(el => el.type === 'button');
     
     return (
       <div 
         className={`min-h-screen p-8 text-center ${isClassic ? 'bg-white' : 'bg-gray-50'}`}
-        style={{ backgroundColor: page.content.backgroundColor }}
+        style={{ backgroundColor: page.content?.backgroundColor || (isClassic ? '#ffffff' : '#f9fafb') }}
       >
         <div className="max-w-md mx-auto">
           {/* Profile Image */}
-          <div className="w-32 h-32 rounded-full mx-auto overflow-hidden mb-6 shadow-lg">
+          <div className="w-32 h-32 rounded-full mx-auto overflow-hidden mb-6 shadow-lg bg-gray-200">
             {profileElement?.data?.profileImage ? (
               <img 
                 src={profileElement.data.profileImage} 
@@ -197,53 +203,75 @@ const PublicPage = () => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gray-200"></div>
+              <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                <span className="text-white text-4xl font-bold">
+                  {(page.content?.title || page.name || 'U').charAt(0).toUpperCase()}
+                </span>
+              </div>
             )}
           </div>
           
           {/* Title */}
-          <h1 className="text-3xl font-bold mb-4" style={{ color: page.content.textColor }}>
-            {page.content.title}
+          <h1 
+            className="text-3xl font-bold mb-4" 
+            style={{ color: page.content?.textColor || '#000000' }}
+          >
+            {page.content?.title || profileElement?.content || page.name}
           </h1>
           
           {/* Description */}
           <p className="text-gray-600 mb-8 text-lg">
-            {page.content.description}
+            {page.content?.description || 'Meus links importantes'}
           </p>
           
           {/* Social Icons placeholder para template moderno */}
           {!isClassic && (
             <div className="flex justify-center space-x-4 mb-8">
-              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-              <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
+              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-xs">IG</span>
+              </div>
+              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-xs">TW</span>
+              </div>
+              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                <span className="text-gray-500 text-xs">LI</span>
+              </div>
             </div>
           )}
           
           {/* Buttons */}
           <div className="space-y-4">
-            {visibleElements.filter(el => el.type === 'button').map((button) => (
-              <button 
-                key={button.id}
-                className={`w-full py-4 px-6 font-semibold text-white transition-all duration-200 hover:scale-105 hover:shadow-lg ${
-                  isClassic ? 'rounded-lg' : 'rounded-none'
-                }`}
-                style={{ 
-                  backgroundColor: button.style?.backgroundColor || '#3b82f6',
-                  borderRadius: isClassic ? '12px' : '0px'
-                }}
-                onClick={() => handleElementClick(button)}
-              >
-                {button.content}
-              </button>
-            ))}
+            {hasButtons ? (
+              visibleElements.filter(el => el.type === 'button').map((button) => (
+                <button 
+                  key={button.id}
+                  className={`w-full py-4 px-6 font-semibold text-white transition-all duration-200 hover:scale-105 hover:shadow-lg ${
+                    isClassic ? 'rounded-lg' : 'rounded-none'
+                  }`}
+                  style={{ 
+                    backgroundColor: button.style?.backgroundColor || '#3b82f6',
+                    borderRadius: isClassic ? '12px' : '0px'
+                  }}
+                  onClick={() => handleElementClick(button)}
+                >
+                  {button.content || 'Link'}
+                </button>
+              ))
+            ) : (
+              <div className="text-gray-500 py-8">
+                <p>Esta página ainda não possui links configurados.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
     );
   };
 
-  return page.templateType === 'landing-page' ? renderLandingPage() : renderLinkTree();
+  // Determinar o tipo de template - garantir compatibilidade
+  const templateType = page.templateType || (page.template?.includes('Landing') ? 'landing-page' : 'link-tree');
+  
+  return templateType === 'landing-page' ? renderLandingPage() : renderLinkTree();
 };
 
 export default PublicPage;
