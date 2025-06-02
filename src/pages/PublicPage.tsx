@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
@@ -10,7 +9,12 @@ const PublicPage = () => {
   const [page, setPage] = useState(pages.find(p => p.url === url && p.status === 'published'));
 
   useEffect(() => {
+    console.log('PublicPage - URL from params:', url);
+    console.log('PublicPage - All pages:', pages.map(p => ({ id: p.id, name: p.name, url: p.url, status: p.status })));
+    
     const foundPage = pages.find(p => p.url === url && p.status === 'published');
+    console.log('PublicPage - Found page:', foundPage);
+    
     setPage(foundPage);
     
     // Incrementar views apenas uma vez por sessão
@@ -28,6 +32,10 @@ const PublicPage = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Página não encontrada</h1>
           <p className="text-gray-600">Esta página não existe ou não está publicada.</p>
+          <div className="mt-4 text-sm text-gray-500">
+            <p>URL procurada: {url}</p>
+            <p>Páginas disponíveis: {pages.filter(p => p.status === 'published').map(p => p.url).join(', ')}</p>
+          </div>
         </div>
       </div>
     );
