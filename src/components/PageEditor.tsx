@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Smartphone, Monitor, Plus, GripVertical, Eye, EyeOff } from 'lucide-react';
+import { Smartphone, Monitor, Plus, GripVertical, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { PageElement } from '@/contexts/PagesContext';
 import ElementProperties from './ElementProperties';
@@ -111,6 +111,25 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
     // Atualizar elemento selecionado se for o mesmo
     if (selectedElement && selectedElement.id === id) {
       setSelectedElement({ ...selectedElement, ...updates });
+    }
+  };
+
+  const deleteElement = (id: string) => {
+    const updatedElements = elements.filter(el => el.id !== id);
+    setElements(updatedElements);
+    
+    if (pageId && page) {
+      updatePage(pageId, {
+        content: {
+          ...page.content,
+          elements: updatedElements
+        }
+      });
+    }
+
+    // Se o elemento deletado estava selecionado, limpar seleção
+    if (selectedElement && selectedElement.id === id) {
+      setSelectedElement(null);
     }
   };
 
@@ -442,20 +461,33 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                         <p className="text-xs text-gray-600 truncate">{element.content}</p>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleElementVisibility(element.id);
-                      }}
-                    >
-                      {element.visible ? (
-                        <Eye className="w-4 h-4" />
-                      ) : (
-                        <EyeOff className="w-4 h-4" />
-                      )}
-                    </Button>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleElementVisibility(element.id);
+                        }}
+                      >
+                        {element.visible ? (
+                          <Eye className="w-4 h-4" />
+                        ) : (
+                          <EyeOff className="w-4 h-4" />
+                        )}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteElement(element.id);
+                        }}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 );
               })}
