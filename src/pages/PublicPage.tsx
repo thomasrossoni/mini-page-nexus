@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
@@ -9,11 +10,34 @@ const PublicPage = () => {
   const [page, setPage] = useState(pages.find(p => p.url === url && p.status === 'published'));
 
   useEffect(() => {
-    console.log('PublicPage - URL from params:', url);
-    console.log('PublicPage - All pages:', pages.map(p => ({ id: p.id, name: p.name, url: p.url, status: p.status })));
+    console.log('=== DEBUG PublicPage ===');
+    console.log('URL from params:', url);
+    console.log('Total pages in context:', pages.length);
+    console.log('All pages details:', pages.map(p => ({ 
+      id: p.id, 
+      name: p.name, 
+      url: p.url, 
+      status: p.status,
+      templateType: p.templateType,
+      template: p.template
+    })));
+    
+    console.log('Published pages:', pages.filter(p => p.status === 'published').map(p => ({ 
+      id: p.id, 
+      name: p.name, 
+      url: p.url 
+    })));
+    
+    console.log('Pages with matching URL (any status):', pages.filter(p => p.url === url).map(p => ({ 
+      id: p.id, 
+      name: p.name, 
+      url: p.url, 
+      status: p.status 
+    })));
     
     const foundPage = pages.find(p => p.url === url && p.status === 'published');
-    console.log('PublicPage - Found page:', foundPage);
+    console.log('Final found page:', foundPage);
+    console.log('=== END DEBUG ===');
     
     setPage(foundPage);
     
@@ -27,14 +51,48 @@ const PublicPage = () => {
   }, [url, pages, updatePage]);
 
   if (!page) {
+    const unpublishedPage = pages.find(p => p.url === url && p.status === 'draft');
+    
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-2xl mx-auto p-8">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Página não encontrada</h1>
-          <p className="text-gray-600">Esta página não existe ou não está publicada.</p>
-          <div className="mt-4 text-sm text-gray-500">
-            <p>URL procurada: {url}</p>
-            <p>Páginas disponíveis: {pages.filter(p => p.status === 'published').map(p => p.url).join(', ')}</p>
+          
+          {unpublishedPage ? (
+            <div className="space-y-4">
+              <p className="text-gray-600">Esta página existe mas não está publicada.</p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-yellow-800 font-medium">Página encontrada como rascunho:</p>
+                <p className="text-yellow-700">Nome: {unpublishedPage.name}</p>
+                <p className="text-yellow-700">Status: {unpublishedPage.status}</p>
+                <p className="text-yellow-700 text-sm mt-2">
+                  Para visualizar esta página, publique-a no editor.
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-600">Esta página não existe ou não está publicada.</p>
+          )}
+          
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg text-left">
+            <p className="text-sm font-medium text-gray-700 mb-2">Informações de debug:</p>
+            <p className="text-xs text-gray-600">URL procurada: <code className="bg-gray-200 px-1 rounded">{url}</code></p>
+            <p className="text-xs text-gray-600">Total de páginas: {pages.length}</p>
+            <p className="text-xs text-gray-600">
+              Páginas publicadas: {pages.filter(p => p.status === 'published').map(p => p.url).join(', ') || 'nenhuma'}
+            </p>
+            <p className="text-xs text-gray-600">
+              Páginas rascunho: {pages.filter(p => p.status === 'draft').map(p => `${p.url} (${p.name})`).join(', ') || 'nenhuma'}
+            </p>
+          </div>
+          
+          <div className="mt-4">
+            <a 
+              href="/dashboard" 
+              className="text-blue-500 hover:text-blue-700 underline"
+            >
+              Voltar ao Dashboard
+            </a>
           </div>
         </div>
       </div>
