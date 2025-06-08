@@ -10,17 +10,45 @@ const PublicPage = () => {
   const [page, setPage] = useState(pages.find(p => p.url === url && p.status === 'published'));
 
   useEffect(() => {
-    console.log('=== DEBUG PublicPage ===');
+    console.log('=== DEBUG PublicPage DETALHADO ===');
     console.log('URL from params:', url);
     console.log('Total pages in context:', pages.length);
-    console.log('All pages details:', pages.map(p => ({ 
-      id: p.id, 
-      name: p.name, 
-      url: p.url, 
-      status: p.status,
-      templateType: p.templateType,
-      template: p.template
-    })));
+    
+    // Log detalhado de cada página
+    pages.forEach((p, index) => {
+      console.log(`Página ${index + 1}:`, {
+        id: p.id,
+        name: p.name,
+        url: p.url,
+        status: p.status,
+        templateType: p.templateType,
+        template: p.template,
+        createdAt: p.createdAt,
+        lastEdited: p.lastEdited
+      });
+    });
+    
+    // Verificar localStorage diretamente
+    const localStorageData = localStorage.getItem('linkLandingPages');
+    console.log('LocalStorage raw data:', localStorageData);
+    
+    if (localStorageData) {
+      try {
+        const parsedData = JSON.parse(localStorageData);
+        console.log('LocalStorage parsed data:', parsedData);
+        console.log('Páginas no localStorage:', parsedData.length);
+        parsedData.forEach((p: any, index: number) => {
+          console.log(`LocalStorage Página ${index + 1}:`, {
+            id: p.id,
+            name: p.name,
+            url: p.url,
+            status: p.status
+          });
+        });
+      } catch (e) {
+        console.error('Erro ao fazer parse do localStorage:', e);
+      }
+    }
     
     console.log('Published pages:', pages.filter(p => p.status === 'published').map(p => ({ 
       id: p.id, 
@@ -37,7 +65,7 @@ const PublicPage = () => {
     
     const foundPage = pages.find(p => p.url === url && p.status === 'published');
     console.log('Final found page:', foundPage);
-    console.log('=== END DEBUG ===');
+    console.log('=== END DEBUG DETALHADO ===');
     
     setPage(foundPage);
     
@@ -77,12 +105,15 @@ const PublicPage = () => {
           <div className="mt-6 p-4 bg-gray-50 rounded-lg text-left">
             <p className="text-sm font-medium text-gray-700 mb-2">Informações de debug:</p>
             <p className="text-xs text-gray-600">URL procurada: <code className="bg-gray-200 px-1 rounded">{url}</code></p>
-            <p className="text-xs text-gray-600">Total de páginas: {pages.length}</p>
+            <p className="text-xs text-gray-600">Total de páginas no contexto: {pages.length}</p>
             <p className="text-xs text-gray-600">
-              Páginas publicadas: {pages.filter(p => p.status === 'published').map(p => p.url).join(', ') || 'nenhuma'}
+              Páginas publicadas: {pages.filter(p => p.status === 'published').map(p => `${p.url} (${p.name})`).join(', ') || 'nenhuma'}
             </p>
             <p className="text-xs text-gray-600">
               Páginas rascunho: {pages.filter(p => p.status === 'draft').map(p => `${p.url} (${p.name})`).join(', ') || 'nenhuma'}
+            </p>
+            <p className="text-xs text-gray-600">
+              Todas as URLs: {pages.map(p => p.url).join(', ') || 'nenhuma'}
             </p>
           </div>
           
