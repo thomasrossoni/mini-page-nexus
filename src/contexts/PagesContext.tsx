@@ -1,5 +1,4 @@
-
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface Page {
   id: string;
@@ -91,8 +90,25 @@ export const usePagesContext = () => {
   return context;
 };
 
-export const PagesProvider = ({ children }: { children: ReactNode }) => {
-  const [pages, setPages] = useState<Page[]>([
+// Função para carregar páginas do localStorage
+const loadPagesFromStorage = (): Page[] => {
+  try {
+    const savedPages = localStorage.getItem('linkLandingPages');
+    if (savedPages) {
+      const parsedPages = JSON.parse(savedPages);
+      // Converter strings de data de volta para objetos Date
+      return parsedPages.map((page: any) => ({
+        ...page,
+        createdAt: new Date(page.createdAt),
+        lastEdited: new Date(page.lastEdited)
+      }));
+    }
+  } catch (error) {
+    console.error('Erro ao carregar páginas do localStorage:', error);
+  }
+  
+  // Retornar página padrão se não houver dados salvos
+  return [
     {
       id: '1',
       name: 'Minha Árvore de Links',
@@ -119,7 +135,35 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
         ]
       }
     }
-  ]);
+  ];
+};
+
+// Função para salvar páginas no localStorage
+const savePagesToStorage = (pages: Page[]) => {
+  try {
+    localStorage.setItem('linkLandingPages', JSON.stringify(pages));
+    console.log('Páginas salvas no localStorage:', pages.length);
+  } catch (error) {
+    console.error('Erro ao salvar páginas no localStorage:', error);
+  }
+};
+
+export const PagesProvider = ({ children }: { children: ReactNode }) => {
+  const [pages, setPages] = useState<Page[]>([]);
+
+  // Carregar páginas do localStorage na inicialização
+  useEffect(() => {
+    const loadedPages = loadPagesFromStorage();
+    setPages(loadedPages);
+    console.log('Páginas carregadas do localStorage:', loadedPages.length);
+  }, []);
+
+  // Salvar páginas no localStorage sempre que o estado mudar
+  useEffect(() => {
+    if (pages.length > 0) {
+      savePagesToStorage(pages);
+    }
+  }, [pages]);
 
   const createPage = (pageData: Omit<Page, 'id' | 'createdAt' | 'lastEdited' | 'views' | 'clicks'>) => {
     const newPage: Page = {
@@ -131,18 +175,33 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       clicks: 0,
     };
     
-    setPages(prev => [...prev, newPage]);
+    console.log('Criando nova página:', newPage);
+    setPages(prev => {
+      const updated = [...prev, newPage];
+      console.log('Total de páginas após criação:', updated.length);
+      return updated;
+    });
     return newPage.id;
   };
 
   const updatePage = (id: string, updates: Partial<Page>) => {
-    setPages(prev => prev.map(page => 
-      page.id === id ? { ...page, ...updates, lastEdited: new Date() } : page
-    ));
+    console.log('Atualizando página ID:', id, 'com updates:', updates);
+    setPages(prev => {
+      const updated = prev.map(page => 
+        page.id === id ? { ...page, ...updates, lastEdited: new Date() } : page
+      );
+      console.log('Total de páginas após atualização:', updated.length);
+      return updated;
+    });
   };
 
   const deletePage = (id: string) => {
-    setPages(prev => prev.filter(page => page.id !== id));
+    console.log('Deletando página ID:', id);
+    setPages(prev => {
+      const updated = prev.filter(page => page.id !== id);
+      console.log('Total de páginas após deleção:', updated.length);
+      return updated;
+    });
   };
 
   const getPage = (id: string) => {
