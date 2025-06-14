@@ -136,17 +136,6 @@ const loadPagesFromStorage = (): Page[] => {
       console.log('Parsed pages:', parsedPages);
       console.log('Número de páginas encontradas:', parsedPages.length);
       
-      // Log detalhado de cada página
-      parsedPages.forEach((page: any, index: number) => {
-        console.log(`Página ${index + 1} no localStorage:`, {
-          id: page.id,
-          name: page.name,
-          url: page.url,
-          status: page.status,
-          templateType: page.templateType
-        });
-      });
-      
       // Converter strings de data de volta para objetos Date
       const processedPages = parsedPages.map((page: any) => ({
         ...page,
@@ -155,7 +144,6 @@ const loadPagesFromStorage = (): Page[] => {
       }));
       
       console.log('Processed pages:', processedPages.length);
-      console.log('URLs encontradas:', processedPages.map((p: any) => p.url));
       return processedPages;
     }
   } catch (error) {
