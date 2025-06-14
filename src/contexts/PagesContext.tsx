@@ -70,6 +70,7 @@ export interface PageElement {
 
 interface PagesContextType {
   pages: Page[];
+  isLoading: boolean;
   createPage: (pageData: Omit<Page, 'id' | 'createdAt' | 'lastEdited' | 'views' | 'clicks'>) => string;
   updatePage: (id: string, updates: Partial<Page>) => void;
   deletePage: (id: string) => void;
@@ -128,19 +129,19 @@ const savePagesToStorage = (pages: Page[]) => {
 
 export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const [pages, setPages] = useState<Page[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadedPages = loadPagesFromStorage();
     setPages(loadedPages);
-    setIsLoaded(true);
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (!isLoading) {
       savePagesToStorage(pages);
     }
-  }, [pages, isLoaded]);
+  }, [pages, isLoading]);
 
   const createPage = (pageData: Omit<Page, 'id' | 'createdAt' | 'lastEdited' | 'views' | 'clicks'>) => {
     const newPage: Page = {
@@ -180,17 +181,18 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const forceReset = () => {
     localStorage.clear();
     setPages([]);
-    setIsLoaded(false);
+    setIsLoading(true);
     setTimeout(() => {
       const loadedPages = loadPagesFromStorage();
       setPages(loadedPages);
-      setIsLoaded(true);
+      setIsLoading(false);
     }, 100);
   };
 
   return (
     <PagesContext.Provider value={{
       pages,
+      isLoading,
       createPage,
       updatePage,
       deletePage,

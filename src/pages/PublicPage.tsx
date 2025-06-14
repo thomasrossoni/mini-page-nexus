@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
@@ -5,11 +6,14 @@ import { PageElement } from '@/contexts/PagesContext';
 
 const PublicPage = () => {
   const { url } = useParams();
-  const { pages, updatePage } = usePagesContext();
+  const { pages, updatePage, isLoading } = usePagesContext();
   const [page, setPage] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [componentLoading, setComponentLoading] = useState(true);
 
   useEffect(() => {
+    // Aguardar o contexto carregar antes de buscar a página
+    if (isLoading) return;
+    
     console.log('PublicPage: Buscando URL:', url);
     console.log('PublicPage: Total de páginas:', pages.length);
     console.log('PublicPage: URLs disponíveis:', pages.map(p => p.url));
@@ -18,7 +22,7 @@ const PublicPage = () => {
     console.log('PublicPage: Página encontrada:', foundPage ? foundPage.name : 'não encontrada');
     
     setPage(foundPage);
-    setIsLoading(false);
+    setComponentLoading(false);
     
     // Incrementar views apenas uma vez por sessão
     if (foundPage && !sessionStorage.getItem(`viewed_${foundPage.id}`)) {
@@ -27,9 +31,9 @@ const PublicPage = () => {
       });
       sessionStorage.setItem(`viewed_${foundPage.id}`, 'true');
     }
-  }, [url, pages, updatePage]);
+  }, [url, pages, updatePage, isLoading]);
 
-  if (isLoading) {
+  if (isLoading || componentLoading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
