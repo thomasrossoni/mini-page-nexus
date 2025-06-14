@@ -94,19 +94,29 @@ export const usePagesContext = () => {
 const loadPagesFromStorage = (): Page[] => {
   try {
     const savedPages = localStorage.getItem('linkLandingPages');
+    console.log('=== LOADING FROM STORAGE ===');
+    console.log('Raw localStorage data:', savedPages);
+    
     if (savedPages) {
       const parsedPages = JSON.parse(savedPages);
+      console.log('Parsed pages:', parsedPages);
+      
       // Converter strings de data de volta para objetos Date
-      return parsedPages.map((page: any) => ({
+      const processedPages = parsedPages.map((page: any) => ({
         ...page,
         createdAt: new Date(page.createdAt),
         lastEdited: new Date(page.lastEdited)
       }));
+      
+      console.log('Processed pages:', processedPages.length);
+      console.log('URLs encontradas:', processedPages.map((p: any) => p.url));
+      return processedPages;
     }
   } catch (error) {
     console.error('Erro ao carregar páginas do localStorage:', error);
   }
   
+  console.log('Retornando página padrão');
   // Retornar página padrão se não houver dados salvos
   return [
     {
@@ -142,7 +152,9 @@ const loadPagesFromStorage = (): Page[] => {
 const savePagesToStorage = (pages: Page[]) => {
   try {
     localStorage.setItem('linkLandingPages', JSON.stringify(pages));
+    console.log('=== SAVING TO STORAGE ===');
     console.log('Páginas salvas no localStorage:', pages.length);
+    console.log('URLs salvas:', pages.map(p => p.url));
   } catch (error) {
     console.error('Erro ao salvar páginas no localStorage:', error);
   }
@@ -150,20 +162,23 @@ const savePagesToStorage = (pages: Page[]) => {
 
 export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const [pages, setPages] = useState<Page[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Carregar páginas do localStorage na inicialização
   useEffect(() => {
+    console.log('=== INICIALIZANDO CONTEXT ===');
     const loadedPages = loadPagesFromStorage();
     setPages(loadedPages);
-    console.log('Páginas carregadas do localStorage:', loadedPages.length);
+    setIsLoaded(true);
+    console.log('Context inicializado com', loadedPages.length, 'páginas');
   }, []);
 
   // Salvar páginas no localStorage sempre que o estado mudar
   useEffect(() => {
-    if (pages.length > 0) {
+    if (isLoaded && pages.length > 0) {
       savePagesToStorage(pages);
     }
-  }, [pages]);
+  }, [pages, isLoaded]);
 
   const createPage = (pageData: Omit<Page, 'id' | 'createdAt' | 'lastEdited' | 'views' | 'clicks'>) => {
     const newPage: Page = {

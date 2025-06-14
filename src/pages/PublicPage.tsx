@@ -7,7 +7,8 @@ import { PageElement } from '@/contexts/PagesContext';
 const PublicPage = () => {
   const { url } = useParams();
   const { pages, updatePage } = usePagesContext();
-  const [page, setPage] = useState(pages.find(p => p.url === url && p.status === 'published'));
+  const [page, setPage] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     console.log('=== DEBUG PublicPage DETALHADO ===');
@@ -45,6 +46,21 @@ const PublicPage = () => {
             status: p.status
           });
         });
+        
+        // Se a página não está no contexto mas está no localStorage, tentar encontrar diretamente
+        if (pages.length === 0 || !pages.find(p => p.url === url && p.status === 'published')) {
+          const directPage = parsedData.find((p: any) => p.url === url && p.status === 'published');
+          if (directPage) {
+            console.log('Página encontrada diretamente no localStorage:', directPage);
+            setPage({
+              ...directPage,
+              createdAt: new Date(directPage.createdAt),
+              lastEdited: new Date(directPage.lastEdited)
+            });
+            setIsLoading(false);
+            return;
+          }
+        }
       } catch (e) {
         console.error('Erro ao fazer parse do localStorage:', e);
       }
@@ -68,6 +84,7 @@ const PublicPage = () => {
     console.log('=== END DEBUG DETALHADO ===');
     
     setPage(foundPage);
+    setIsLoading(false);
     
     // Incrementar views apenas uma vez por sessão
     if (foundPage && !sessionStorage.getItem(`viewed_${foundPage.id}`)) {
@@ -77,6 +94,17 @@ const PublicPage = () => {
       sessionStorage.setItem(`viewed_${foundPage.id}`, 'true');
     }
   }, [url, pages, updatePage]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando página...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!page) {
     const unpublishedPage = pages.find(p => p.url === url && p.status === 'draft');
