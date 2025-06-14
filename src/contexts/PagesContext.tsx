@@ -79,6 +79,7 @@ interface PagesContextType {
   updatePage: (id: string, updates: Partial<Page>) => void;
   deletePage: (id: string) => void;
   getPage: (id: string) => Page | undefined;
+  clearAllPages: () => void;
 }
 
 const PagesContext = createContext<PagesContextType | undefined>(undefined);
@@ -130,7 +131,6 @@ const loadPagesFromStorage = (): Page[] => {
   }
   
   console.log('Retornando array vazio - sem dados salvos');
-  // Retornar array vazio se não houver dados salvos - SEM criar dados padrão
   return [];
 };
 
@@ -143,6 +143,16 @@ const savePagesToStorage = (pages: Page[]) => {
     console.log('URLs salvas:', pages.map(p => p.url));
   } catch (error) {
     console.error('Erro ao salvar páginas no localStorage:', error);
+  }
+};
+
+// Função para limpar todas as páginas
+const clearAllPagesFromStorage = () => {
+  try {
+    localStorage.removeItem('linkLandingPages');
+    console.log('=== CLEARED ALL PAGES FROM STORAGE ===');
+  } catch (error) {
+    console.error('Erro ao limpar páginas do localStorage:', error);
   }
 };
 
@@ -209,13 +219,20 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
     return pages.find(page => page.id === id);
   };
 
+  const clearAllPages = () => {
+    console.log('Limpando todas as páginas');
+    clearAllPagesFromStorage();
+    setPages([]);
+  };
+
   return (
     <PagesContext.Provider value={{
       pages,
       createPage,
       updatePage,
       deletePage,
-      getPage
+      getPage,
+      clearAllPages
     }}>
       {children}
     </PagesContext.Provider>
