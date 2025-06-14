@@ -94,6 +94,16 @@ export const usePagesContext = () => {
 // Função para carregar páginas do localStorage
 const loadPagesFromStorage = (): Page[] => {
   try {
+    // Verificar todas as chaves do localStorage
+    console.log('=== VERIFICANDO TODAS AS CHAVES DO LOCALSTORAGE ===');
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      console.log(`LocalStorage key ${i}:`, key);
+      if (key && key.includes('link') || key && key.includes('page')) {
+        console.log(`  Value for ${key}:`, localStorage.getItem(key));
+      }
+    }
+    
     const savedPages = localStorage.getItem('linkLandingPages');
     console.log('=== LOADING FROM STORAGE ===');
     console.log('Raw localStorage data:', savedPages);
@@ -101,6 +111,18 @@ const loadPagesFromStorage = (): Page[] => {
     if (savedPages) {
       const parsedPages = JSON.parse(savedPages);
       console.log('Parsed pages:', parsedPages);
+      console.log('Número de páginas encontradas:', parsedPages.length);
+      
+      // Log detalhado de cada página
+      parsedPages.forEach((page: any, index: number) => {
+        console.log(`Página ${index + 1} no localStorage:`, {
+          id: page.id,
+          name: page.name,
+          url: page.url,
+          status: page.status,
+          templateType: page.templateType
+        });
+      });
       
       // Converter strings de data de volta para objetos Date
       const processedPages = parsedPages.map((page: any) => ({
