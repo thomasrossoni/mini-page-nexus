@@ -94,16 +94,6 @@ export const usePagesContext = () => {
 // Função para carregar páginas do localStorage
 const loadPagesFromStorage = (): Page[] => {
   try {
-    // Verificar todas as chaves do localStorage
-    console.log('=== VERIFICANDO TODAS AS CHAVES DO LOCALSTORAGE ===');
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      console.log(`LocalStorage key ${i}:`, key);
-      if (key && key.includes('link') || key && key.includes('page')) {
-        console.log(`  Value for ${key}:`, localStorage.getItem(key));
-      }
-    }
-    
     const savedPages = localStorage.getItem('linkLandingPages');
     console.log('=== LOADING FROM STORAGE ===');
     console.log('Raw localStorage data:', savedPages);
@@ -140,7 +130,7 @@ const loadPagesFromStorage = (): Page[] => {
   }
   
   console.log('Retornando array vazio - sem dados salvos');
-  // Retornar array vazio se não houver dados salvos
+  // Retornar array vazio se não houver dados salvos - SEM criar dados padrão
   return [];
 };
 
@@ -171,7 +161,7 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
 
   // Salvar páginas no localStorage sempre que o estado mudar
   useEffect(() => {
-    if (isLoaded && pages.length > 0) {
+    if (isLoaded) {
       savePagesToStorage(pages);
     }
   }, [pages, isLoaded]);
