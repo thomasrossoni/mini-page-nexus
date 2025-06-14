@@ -92,22 +92,8 @@ const STORAGE_KEY = 'linkLandingPages';
 
 const forceResetStorage = () => {
   try {
-    const keysToRemove = [STORAGE_KEY, 'pages', 'userPages'];
-    keysToRemove.forEach(key => {
-      localStorage.removeItem(key);
-    });
-    
-    const remainingKeys = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && (key.includes('page') || key.includes('link'))) {
-        remainingKeys.push(key);
-      }
-    }
-    
-    if (remainingKeys.length > 0) {
-      remainingKeys.forEach(key => localStorage.removeItem(key));
-    }
+    localStorage.clear();
+    console.log('LocalStorage completamente limpo');
   } catch (error) {
     console.error('Erro durante o reset:', error);
   }
@@ -116,6 +102,7 @@ const forceResetStorage = () => {
 const loadPagesFromStorage = (): Page[] => {
   try {
     const savedPages = localStorage.getItem(STORAGE_KEY);
+    console.log('Carregando do localStorage:', savedPages);
     
     if (savedPages) {
       const parsedPages = JSON.parse(savedPages);
@@ -126,10 +113,11 @@ const loadPagesFromStorage = (): Page[] => {
         lastEdited: new Date(page.lastEdited)
       }));
       
+      console.log('Páginas carregadas:', processedPages.length);
       return processedPages;
     }
   } catch (error) {
-    console.error('Erro ao carregar páginas do localStorage:', error);
+    console.error('Erro ao carregar páginas:', error);
   }
   
   return [];
@@ -138,8 +126,9 @@ const loadPagesFromStorage = (): Page[] => {
 const savePagesToStorage = (pages: Page[]) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
+    console.log('Páginas salvas:', pages.length);
   } catch (error) {
-    console.error('Erro ao salvar páginas no localStorage:', error);
+    console.error('Erro ao salvar páginas:', error);
   }
 };
 
@@ -148,9 +137,11 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    console.log('Inicializando PagesProvider...');
     const loadedPages = loadPagesFromStorage();
     setPages(loadedPages);
     setIsLoaded(true);
+    console.log('PagesProvider inicializado com', loadedPages.length, 'páginas');
   }, []);
 
   useEffect(() => {
@@ -169,11 +160,13 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       clicks: 0,
     };
     
+    console.log('Criando nova página:', newPage.name, newPage.url);
     setPages(prev => [...prev, newPage]);
     return newPage.id;
   };
 
   const updatePage = (id: string, updates: Partial<Page>) => {
+    console.log('Atualizando página:', id);
     setPages(prev => 
       prev.map(page => 
         page.id === id ? { ...page, ...updates, lastEdited: new Date() } : page
@@ -182,19 +175,24 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deletePage = (id: string) => {
+    console.log('Deletando página:', id);
     setPages(prev => prev.filter(page => page.id !== id));
   };
 
   const getPage = (id: string) => {
-    return pages.find(page => page.id === id);
+    const page = pages.find(page => page.id === id);
+    console.log('Buscando página:', id, page ? 'encontrada' : 'não encontrada');
+    return page;
   };
 
   const clearAllPages = () => {
+    console.log('Limpando todas as páginas');
     localStorage.removeItem(STORAGE_KEY);
     setPages([]);
   };
 
   const forceReset = () => {
+    console.log('Reset forçado iniciado');
     forceResetStorage();
     setPages([]);
     setIsLoaded(false);
@@ -202,6 +200,7 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       const loadedPages = loadPagesFromStorage();
       setPages(loadedPages);
       setIsLoaded(true);
+      console.log('Reset forçado concluído');
     }, 100);
   };
 

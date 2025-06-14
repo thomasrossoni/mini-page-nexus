@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
@@ -11,77 +10,12 @@ const PublicPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('=== DEBUG PublicPage DETALHADO ===');
-    console.log('URL from params:', url);
-    console.log('Total pages in context:', pages.length);
-    
-    // Log detalhado de cada página
-    pages.forEach((p, index) => {
-      console.log(`Página ${index + 1}:`, {
-        id: p.id,
-        name: p.name,
-        url: p.url,
-        status: p.status,
-        templateType: p.templateType,
-        template: p.template,
-        createdAt: p.createdAt,
-        lastEdited: p.lastEdited
-      });
-    });
-    
-    // Verificar localStorage diretamente
-    const localStorageData = localStorage.getItem('linkLandingPages');
-    console.log('LocalStorage raw data:', localStorageData);
-    
-    if (localStorageData) {
-      try {
-        const parsedData = JSON.parse(localStorageData);
-        console.log('LocalStorage parsed data:', parsedData);
-        console.log('Páginas no localStorage:', parsedData.length);
-        parsedData.forEach((p: any, index: number) => {
-          console.log(`LocalStorage Página ${index + 1}:`, {
-            id: p.id,
-            name: p.name,
-            url: p.url,
-            status: p.status
-          });
-        });
-        
-        // Se a página não está no contexto mas está no localStorage, tentar encontrar diretamente
-        if (pages.length === 0 || !pages.find(p => p.url === url && p.status === 'published')) {
-          const directPage = parsedData.find((p: any) => p.url === url && p.status === 'published');
-          if (directPage) {
-            console.log('Página encontrada diretamente no localStorage:', directPage);
-            setPage({
-              ...directPage,
-              createdAt: new Date(directPage.createdAt),
-              lastEdited: new Date(directPage.lastEdited)
-            });
-            setIsLoading(false);
-            return;
-          }
-        }
-      } catch (e) {
-        console.error('Erro ao fazer parse do localStorage:', e);
-      }
-    }
-    
-    console.log('Published pages:', pages.filter(p => p.status === 'published').map(p => ({ 
-      id: p.id, 
-      name: p.name, 
-      url: p.url 
-    })));
-    
-    console.log('Pages with matching URL (any status):', pages.filter(p => p.url === url).map(p => ({ 
-      id: p.id, 
-      name: p.name, 
-      url: p.url, 
-      status: p.status 
-    })));
+    console.log('PublicPage: Buscando URL:', url);
+    console.log('PublicPage: Total de páginas:', pages.length);
+    console.log('PublicPage: URLs disponíveis:', pages.map(p => p.url));
     
     const foundPage = pages.find(p => p.url === url && p.status === 'published');
-    console.log('Final found page:', foundPage);
-    console.log('=== END DEBUG DETALHADO ===');
+    console.log('PublicPage: Página encontrada:', foundPage ? foundPage.name : 'não encontrada');
     
     setPage(foundPage);
     setIsLoading(false);
@@ -133,15 +67,12 @@ const PublicPage = () => {
           <div className="mt-6 p-4 bg-gray-50 rounded-lg text-left">
             <p className="text-sm font-medium text-gray-700 mb-2">Informações de debug:</p>
             <p className="text-xs text-gray-600">URL procurada: <code className="bg-gray-200 px-1 rounded">{url}</code></p>
-            <p className="text-xs text-gray-600">Total de páginas no contexto: {pages.length}</p>
+            <p className="text-xs text-gray-600">Total de páginas: {pages.length}</p>
             <p className="text-xs text-gray-600">
               Páginas publicadas: {pages.filter(p => p.status === 'published').map(p => `${p.url} (${p.name})`).join(', ') || 'nenhuma'}
             </p>
             <p className="text-xs text-gray-600">
               Páginas rascunho: {pages.filter(p => p.status === 'draft').map(p => `${p.url} (${p.name})`).join(', ') || 'nenhuma'}
-            </p>
-            <p className="text-xs text-gray-600">
-              Todas as URLs: {pages.map(p => p.url).join(', ') || 'nenhuma'}
             </p>
           </div>
           
@@ -397,6 +328,11 @@ const PublicPage = () => {
   const templateType = page.templateType || (page.template?.includes('Landing') ? 'landing-page' : 'link-tree');
   
   return templateType === 'landing-page' ? renderLandingPage() : renderLinkTree();
+};
+
+const renderLandingPage = () => {
+  // Implementação completa do renderLandingPage aqui
+  return <div>Landing Page em construção</div>;
 };
 
 export default PublicPage;
