@@ -90,17 +90,13 @@ export const usePagesContext = () => {
 
 const STORAGE_KEY = 'linkLandingPages';
 
-// Função para fazer reset completo do localStorage
 const forceResetStorage = () => {
   try {
-    console.log('=== FORCE RESET - LIMPANDO TODOS OS DADOS ===');
     const keysToRemove = [STORAGE_KEY, 'pages', 'userPages'];
     keysToRemove.forEach(key => {
       localStorage.removeItem(key);
-      console.log(`Removida chave: ${key}`);
     });
     
-    // Verificar se limpou mesmo
     const remainingKeys = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -110,54 +106,38 @@ const forceResetStorage = () => {
     }
     
     if (remainingKeys.length > 0) {
-      console.log('Chaves restantes encontradas:', remainingKeys);
       remainingKeys.forEach(key => localStorage.removeItem(key));
     }
-    
-    console.log('Reset completo finalizado');
   } catch (error) {
     console.error('Erro durante o reset:', error);
   }
 };
 
-// Função para carregar páginas do localStorage
 const loadPagesFromStorage = (): Page[] => {
   try {
     const savedPages = localStorage.getItem(STORAGE_KEY);
-    console.log('=== LOADING FROM STORAGE ===');
-    console.log('Raw localStorage data:', savedPages);
     
     if (savedPages) {
       const parsedPages = JSON.parse(savedPages);
-      console.log('Parsed pages:', parsedPages);
-      console.log('Número de páginas encontradas:', parsedPages.length);
       
-      // Converter strings de data de volta para objetos Date
       const processedPages = parsedPages.map((page: any) => ({
         ...page,
         createdAt: new Date(page.createdAt),
         lastEdited: new Date(page.lastEdited)
       }));
       
-      console.log('Processed pages:', processedPages.length);
       return processedPages;
     }
   } catch (error) {
     console.error('Erro ao carregar páginas do localStorage:', error);
   }
   
-  console.log('Retornando array vazio - sem dados salvos');
   return [];
 };
 
-// Função para salvar páginas no localStorage
 const savePagesToStorage = (pages: Page[]) => {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
-    console.log('=== SAVING TO STORAGE ===');
-    console.log('Páginas salvas no localStorage:', pages.length);
-    console.log('URLs salvas:', pages.map(p => p.url));
-    console.log('IDs salvos:', pages.map(p => p.id));
   } catch (error) {
     console.error('Erro ao salvar páginas no localStorage:', error);
   }
@@ -167,16 +147,12 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const [pages, setPages] = useState<Page[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Carregar páginas do localStorage na inicialização
   useEffect(() => {
-    console.log('=== INICIALIZANDO CONTEXT ===');
     const loadedPages = loadPagesFromStorage();
     setPages(loadedPages);
     setIsLoaded(true);
-    console.log('Context inicializado com', loadedPages.length, 'páginas');
   }, []);
 
-  // Salvar páginas no localStorage sempre que o estado mudar
   useEffect(() => {
     if (isLoaded) {
       savePagesToStorage(pages);
@@ -193,40 +169,20 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       clicks: 0,
     };
     
-    console.log('=== CRIANDO NOVA PÁGINA ===');
-    console.log('Nova página:', newPage);
-    console.log('Pages antes da criação:', pages.length);
-    
-    setPages(prev => {
-      const updated = [...prev, newPage];
-      console.log('Total de páginas após criação:', updated.length);
-      console.log('URLs após criação:', updated.map(p => p.url));
-      return updated;
-    });
+    setPages(prev => [...prev, newPage]);
     return newPage.id;
   };
 
   const updatePage = (id: string, updates: Partial<Page>) => {
-    console.log('=== ATUALIZANDO PÁGINA ===');
-    console.log('ID:', id, 'Updates:', updates);
-    setPages(prev => {
-      const updated = prev.map(page => 
+    setPages(prev => 
+      prev.map(page => 
         page.id === id ? { ...page, ...updates, lastEdited: new Date() } : page
-      );
-      console.log('Total de páginas após atualização:', updated.length);
-      return updated;
-    });
+      )
+    );
   };
 
   const deletePage = (id: string) => {
-    console.log('=== DELETANDO PÁGINA ===');
-    console.log('ID a ser deletado:', id);
-    setPages(prev => {
-      const updated = prev.filter(page => page.id !== id);
-      console.log('Total de páginas após deleção:', updated.length);
-      console.log('URLs restantes:', updated.map(p => p.url));
-      return updated;
-    });
+    setPages(prev => prev.filter(page => page.id !== id));
   };
 
   const getPage = (id: string) => {
@@ -234,22 +190,18 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearAllPages = () => {
-    console.log('=== LIMPANDO TODAS AS PÁGINAS ===');
     localStorage.removeItem(STORAGE_KEY);
     setPages([]);
   };
 
   const forceReset = () => {
-    console.log('=== FORCE RESET INICIADO ===');
     forceResetStorage();
     setPages([]);
     setIsLoaded(false);
-    // Reinicializar
     setTimeout(() => {
       const loadedPages = loadPagesFromStorage();
       setPages(loadedPages);
       setIsLoaded(true);
-      console.log('Force reset finalizado. Páginas carregadas:', loadedPages.length);
     }, 100);
   };
 
