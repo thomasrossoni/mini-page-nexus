@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface Page {
@@ -116,36 +117,9 @@ const loadPagesFromStorage = (): Page[] => {
     console.error('Erro ao carregar páginas do localStorage:', error);
   }
   
-  console.log('Retornando página padrão');
-  // Retornar página padrão se não houver dados salvos
-  return [
-    {
-      id: '1',
-      name: 'Minha Árvore de Links',
-      url: 'minha-arvore',
-      domain: 'meuslinks.app',
-      template: 'Árvore de Links',
-      templateType: 'link-tree',
-      status: 'published',
-      createdAt: new Date('2024-01-15'),
-      lastEdited: new Date(),
-      views: 156,
-      clicks: 23,
-      content: {
-        title: 'Minha Árvore de Links',
-        description: 'Todos os meus links em um só lugar',
-        backgroundColor: '#ffffff',
-        textColor: '#000000',
-        elements: [
-          { id: '1', type: 'profile', visible: true, data: { profileImage: '' } },
-          { id: '2', type: 'title', content: 'Minha Árvore de Links', visible: true },
-          { id: '3', type: 'description', content: 'Todos os meus links em um só lugar', visible: true },
-          { id: '4', type: 'button', content: 'WhatsApp', url: 'https://wa.me/5511999999999', visible: true, style: { backgroundColor: '#25D366' } },
-          { id: '5', type: 'button', content: 'Instagram', url: 'https://instagram.com/minhaloja', visible: true, style: { backgroundColor: '#E4405F' } },
-        ]
-      }
-    }
-  ];
+  console.log('Retornando array vazio - sem dados salvos');
+  // Retornar array vazio se não houver dados salvos
+  return [];
 };
 
 // Função para salvar páginas no localStorage
