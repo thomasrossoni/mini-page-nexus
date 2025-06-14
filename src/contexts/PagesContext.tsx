@@ -41,11 +41,8 @@ export interface PageElement {
     margin?: string;
   };
   data?: {
-    // Para imagens gerais
     profileImage?: string;
-    // Para carrossel de imagens
     images?: string[];
-    // Para seção de serviços
     services?: Array<{
       title: string;
       description: string;
@@ -53,14 +50,12 @@ export interface PageElement {
       icon?: string;
       image?: string;
     }>;
-    // Para depoimentos
     testimonials?: Array<{
       name: string;
       role: string;
       content: string;
       avatar?: string;
     }>;
-    // Para informações de contato
     contact?: {
       phone?: string;
       email?: string;
@@ -93,12 +88,13 @@ export const usePagesContext = () => {
   return context;
 };
 
+const STORAGE_KEY = 'linkLandingPages';
+
 // Função para fazer reset completo do localStorage
 const forceResetStorage = () => {
   try {
     console.log('=== FORCE RESET - LIMPANDO TODOS OS DADOS ===');
-    // Limpar todas as chaves relacionadas
-    const keysToRemove = ['linkLandingPages', 'pages', 'userPages'];
+    const keysToRemove = [STORAGE_KEY, 'pages', 'userPages'];
     keysToRemove.forEach(key => {
       localStorage.removeItem(key);
       console.log(`Removida chave: ${key}`);
@@ -127,7 +123,7 @@ const forceResetStorage = () => {
 // Função para carregar páginas do localStorage
 const loadPagesFromStorage = (): Page[] => {
   try {
-    const savedPages = localStorage.getItem('linkLandingPages');
+    const savedPages = localStorage.getItem(STORAGE_KEY);
     console.log('=== LOADING FROM STORAGE ===');
     console.log('Raw localStorage data:', savedPages);
     
@@ -157,7 +153,7 @@ const loadPagesFromStorage = (): Page[] => {
 // Função para salvar páginas no localStorage
 const savePagesToStorage = (pages: Page[]) => {
   try {
-    localStorage.setItem('linkLandingPages', JSON.stringify(pages));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
     console.log('=== SAVING TO STORAGE ===');
     console.log('Páginas salvas no localStorage:', pages.length);
     console.log('URLs salvas:', pages.map(p => p.url));
@@ -239,7 +235,7 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
 
   const clearAllPages = () => {
     console.log('=== LIMPANDO TODAS AS PÁGINAS ===');
-    localStorage.removeItem('linkLandingPages');
+    localStorage.removeItem(STORAGE_KEY);
     setPages([]);
   };
 
