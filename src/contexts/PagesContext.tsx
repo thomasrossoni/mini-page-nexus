@@ -80,6 +80,7 @@ interface PagesContextType {
   deletePage: (id: string) => void;
   getPage: (id: string) => Page | undefined;
   clearAllPages: () => void;
+  forceReset: () => void;
 }
 
 const PagesContext = createContext<PagesContextType | undefined>(undefined);
@@ -90,6 +91,37 @@ export const usePagesContext = () => {
     throw new Error('usePagesContext must be used within a PagesProvider');
   }
   return context;
+};
+
+// Função para fazer reset completo do localStorage
+const forceResetStorage = () => {
+  try {
+    console.log('=== FORCE RESET - LIMPANDO TODOS OS DADOS ===');
+    // Limpar todas as chaves relacionadas
+    const keysToRemove = ['linkLandingPages', 'pages', 'userPages'];
+    keysToRemove.forEach(key => {
+      localStorage.removeItem(key);
+      console.log(`Removida chave: ${key}`);
+    });
+    
+    // Verificar se limpou mesmo
+    const remainingKeys = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.includes('page') || key.includes('link'))) {
+        remainingKeys.push(key);
+      }
+    }
+    
+    if (remainingKeys.length > 0) {
+      console.log('Chaves restantes encontradas:', remainingKeys);
+      remainingKeys.forEach(key => localStorage.removeItem(key));
+    }
+    
+    console.log('Reset completo finalizado');
+  } catch (error) {
+    console.error('Erro durante o reset:', error);
+  }
 };
 
 // Função para carregar páginas do localStorage
@@ -141,18 +173,9 @@ const savePagesToStorage = (pages: Page[]) => {
     console.log('=== SAVING TO STORAGE ===');
     console.log('Páginas salvas no localStorage:', pages.length);
     console.log('URLs salvas:', pages.map(p => p.url));
+    console.log('IDs salvos:', pages.map(p => p.id));
   } catch (error) {
     console.error('Erro ao salvar páginas no localStorage:', error);
-  }
-};
-
-// Função para limpar todas as páginas
-const clearAllPagesFromStorage = () => {
-  try {
-    localStorage.removeItem('linkLandingPages');
-    console.log('=== CLEARED ALL PAGES FROM STORAGE ===');
-  } catch (error) {
-    console.error('Erro ao limpar páginas do localStorage:', error);
   }
 };
 
@@ -186,17 +209,22 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       clicks: 0,
     };
     
-    console.log('Criando nova página:', newPage);
+    console.log('=== CRIANDO NOVA PÁGINA ===');
+    console.log('Nova página:', newPage);
+    console.log('Pages antes da criação:', pages.length);
+    
     setPages(prev => {
       const updated = [...prev, newPage];
       console.log('Total de páginas após criação:', updated.length);
+      console.log('URLs após criação:', updated.map(p => p.url));
       return updated;
     });
     return newPage.id;
   };
 
   const updatePage = (id: string, updates: Partial<Page>) => {
-    console.log('Atualizando página ID:', id, 'com updates:', updates);
+    console.log('=== ATUALIZANDO PÁGINA ===');
+    console.log('ID:', id, 'Updates:', updates);
     setPages(prev => {
       const updated = prev.map(page => 
         page.id === id ? { ...page, ...updates, lastEdited: new Date() } : page
@@ -207,10 +235,12 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deletePage = (id: string) => {
-    console.log('Deletando página ID:', id);
+    console.log('=== DELETANDO PÁGINA ===');
+    console.log('ID a ser deletado:', id);
     setPages(prev => {
       const updated = prev.filter(page => page.id !== id);
       console.log('Total de páginas após deleção:', updated.length);
+      console.log('URLs restantes:', updated.map(p => p.url));
       return updated;
     });
   };
@@ -220,9 +250,23 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearAllPages = () => {
-    console.log('Limpando todas as páginas');
-    clearAllPagesFromStorage();
+    console.log('=== LIMPANDO TODAS AS PÁGINAS ===');
+    localStorage.removeItem('linkLandingPages');
     setPages([]);
+  };
+
+  const forceReset = () => {
+    console.log('=== FORCE RESET INICIADO ===');
+    forceResetStorage();
+    setPages([]);
+    setIsLoaded(false);
+    // Reinicializar
+    setTimeout(() => {
+      const loadedPages = loadPagesFromStorage();
+      setPages(loadedPages);
+      setIsLoaded(true);
+      console.log('Force reset finalizado. Páginas carregadas:', loadedPages.length);
+    }, 100);
   };
 
   return (
@@ -232,7 +276,8 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       updatePage,
       deletePage,
       getPage,
-      clearAllPages
+      clearAllPages,
+      forceReset
     }}>
       {children}
     </PagesContext.Provider>

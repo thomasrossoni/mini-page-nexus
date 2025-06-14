@@ -1,16 +1,20 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Eye, Edit, ExternalLink, Copy, Trash2, Globe, Share } from 'lucide-react';
+import { Eye, Edit, ExternalLink, Copy, Trash2, Globe, Share, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { toast } from 'sonner';
 
 const PageGrid = () => {
-  const { pages, deletePage, updatePage } = usePagesContext();
+  const { pages, deletePage, updatePage, forceReset } = usePagesContext();
+
+  const handleForceReset = () => {
+    forceReset();
+    toast.success('Sistema resetado! Todos os dados antigos foram limpos.');
+  };
 
   const getPublicUrl = (page: any) => {
     return `${window.location.origin}/p/${page.url}`;
@@ -67,11 +71,45 @@ const PageGrid = () => {
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma página criada ainda</h3>
         <p className="text-gray-600 mb-6">Crie sua primeira landing page e comece a compartilhar seus links</p>
-        <Link to="/create">
-          <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-            Criar Primeira Página
-          </Button>
-        </Link>
+        
+        <div className="space-y-4">
+          <Link to="/create">
+            <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+              Criar Primeira Página
+            </Button>
+          </Link>
+          
+          <div className="pt-4 border-t border-gray-200">
+            <p className="text-sm text-gray-500 mb-3">Problemas com dados antigos?</p>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset Completo
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Reset Completo do Sistema</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Esta ação irá limpar TODOS os dados salvos no navegador e reiniciar o sistema. 
+                    Use apenas se estiver enfrentando problemas com dados antigos ou corrompidos.
+                    Todas as páginas serão permanentemente removidas.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleForceReset}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Reset Completo
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
       </div>
     );
   }
@@ -82,6 +120,31 @@ const PageGrid = () => {
         <h2 className="text-xl font-semibold text-gray-900">Suas Páginas</h2>
         <div className="flex items-center space-x-2">
           <Badge variant="secondary">{pages.length} página{pages.length !== 1 ? 's' : ''}</Badge>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                <RotateCcw className="w-4 h-4 mr-2" />
+                Reset
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Reset Completo do Sistema</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação irá limpar TODOS os dados e reiniciar o sistema. Use apenas se estiver com problemas.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={handleForceReset}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Reset Completo
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
