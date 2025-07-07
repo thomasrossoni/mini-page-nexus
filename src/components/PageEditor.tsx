@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Smartphone, Monitor, Plus, GripVertical, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { usePagesContext } from '@/contexts/PagesContext';
 import { PageElement } from '@/contexts/PagesContext';
@@ -565,6 +566,63 @@ const PageEditor = ({ pageId }: PageEditorProps) => {
                     className="flex-1"
                   />
                 </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <h3 className="font-semibold mb-4">Tracking & Analytics</h3>
+            <div className="space-y-3">
+              <div>
+                <Label htmlFor="metaPixel">Pixel da Meta</Label>
+                <Input
+                  id="metaPixel"
+                  placeholder="Ex: 123456789012345"
+                  value={page.tracking?.metaPixel || ''}
+                  onChange={(e) => updatePage(pageId!, {
+                    tracking: { 
+                      ...page.tracking, 
+                      metaPixel: e.target.value 
+                    }
+                  })}
+                />
+                <p className="text-xs text-gray-500 mt-1">ID do pixel do Facebook/Meta</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="metaApiToken">Token da API de Conversão (Meta)</Label>
+                <Input
+                  id="metaApiToken"
+                  type="password"
+                  placeholder="Ex: EAABsb..."
+                  value={page.tracking?.metaApiToken || ''}
+                  onChange={(e) => updatePage(pageId!, {
+                    tracking: { 
+                      ...page.tracking, 
+                      metaApiToken: e.target.value 
+                    }
+                  })}
+                />
+                <p className="text-xs text-gray-500 mt-1">Token para API de conversões do Meta</p>
+              </div>
+              
+              <div>
+                <Label htmlFor="customHeadCode">Código personalizado (HEAD)</Label>
+                <Textarea
+                  id="customHeadCode"
+                  placeholder="<script>...</script> ou <meta>..."
+                  value={page.tracking?.customHeadCode || ''}
+                  onChange={(e) => updatePage(pageId!, {
+                    tracking: { 
+                      ...page.tracking, 
+                      customHeadCode: e.target.value 
+                    }
+                  })}
+                  rows={4}
+                />
+                <p className="text-xs text-gray-500 mt-1">Código que será inserido no &lt;head&gt; da página</p>
               </div>
             </div>
           </CardContent>

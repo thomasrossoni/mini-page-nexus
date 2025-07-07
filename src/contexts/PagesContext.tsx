@@ -21,6 +21,11 @@ interface Page {
     textColor: string;
     elements: PageElement[];
   };
+  tracking?: {
+    metaPixel?: string;
+    metaApiToken?: string;
+    customHeadCode?: string;
+  };
 }
 
 export interface PageElement {
