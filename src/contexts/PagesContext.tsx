@@ -99,47 +99,18 @@ const STORAGE_KEY = 'linkLandingPages';
 const loadPagesFromStorage = (): Page[] => {
   try {
     const savedPages = localStorage.getItem(STORAGE_KEY);
-    console.log('=== DEBUG CARREGAMENTO ===');
-    console.log('Raw localStorage data:', savedPages);
     
     if (savedPages) {
       const parsedPages = JSON.parse(savedPages);
-      console.log('Parsed pages:', parsedPages);
-      console.log('Total pages found:', parsedPages.length);
       
-      // Log cada página antes do filtro
-      parsedPages.forEach((page: any, index: number) => {
-        console.log(`Página ${index + 1}:`, {
-          id: page.id,
-          name: page.name,
-          url: page.url,
-          isOldHardcoded: page.id === "1" || page.url === "minha-arvore"
-        });
-      });
-      
-      // Filtrar apenas páginas com IDs e URLs específicos antigos
-      const userPages = parsedPages.filter((page: any) => {
-        const isOldPage = page.id === "1" || page.url === "minha-arvore";
-        console.log(`Página ${page.name} (${page.id}): ${isOldPage ? 'REMOVIDA' : 'MANTIDA'}`);
-        return !isOldPage;
-      });
-      
-      console.log('Páginas após filtro:', userPages.length);
-      
-      const processedPages = userPages.map((page: any) => ({
+      const processedPages = parsedPages.map((page: any) => ({
         ...page,
         createdAt: new Date(page.createdAt),
         lastEdited: new Date(page.lastEdited)
       }));
       
-      console.log('Páginas processadas finais:', processedPages.length);
-      console.log('=== END DEBUG CARREGAMENTO ===');
-      
       return processedPages;
     }
-    
-    console.log('Nenhum dado no localStorage');
-    console.log('=== END DEBUG CARREGAMENTO ===');
   } catch (error) {
     console.error('Erro ao carregar páginas:', error);
   }
@@ -149,18 +120,7 @@ const loadPagesFromStorage = (): Page[] => {
 
 const savePagesToStorage = (pages: Page[]) => {
   try {
-    console.log('=== SALVANDO PÁGINAS ===');
-    console.log('Páginas para salvar:', pages.length);
-    pages.forEach((page, index) => {
-      console.log(`Salvando página ${index + 1}:`, {
-        id: page.id,
-        name: page.name,
-        url: page.url
-      });
-    });
     localStorage.setItem(STORAGE_KEY, JSON.stringify(pages));
-    console.log('Páginas salvas com sucesso');
-    console.log('=== END SALVANDO PÁGINAS ===');
   } catch (error) {
     console.error('Erro ao salvar páginas:', error);
   }
@@ -171,17 +131,13 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('PagesProvider: Iniciando carregamento...');
     const loadedPages = loadPagesFromStorage();
-    console.log('PagesProvider: Páginas carregadas:', loadedPages.length);
     setPages(loadedPages);
     setIsLoading(false);
-    console.log('PagesProvider: Carregamento concluído');
   }, []);
 
   useEffect(() => {
     if (!isLoading) {
-      console.log('PagesProvider: Salvando alterações...');
       savePagesToStorage(pages);
     }
   }, [pages, isLoading]);
@@ -195,12 +151,6 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       views: 0,
       clicks: 0,
     };
-    
-    console.log('Criando nova página:', {
-      id: newPage.id,
-      name: newPage.name,
-      url: newPage.url
-    });
     
     setPages(prev => [...prev, newPage]);
     return newPage.id;
@@ -223,14 +173,11 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const clearAllPages = () => {
-    console.log('=== LIMPANDO TODAS AS PÁGINAS ===');
     localStorage.removeItem(STORAGE_KEY);
     setPages([]);
-    console.log('Todas as páginas foram removidas');
   };
 
   const forceReset = () => {
-    console.log('=== RESET FORÇADO ===');
     localStorage.clear();
     setPages([]);
     setIsLoading(true);
@@ -238,7 +185,6 @@ export const PagesProvider = ({ children }: { children: ReactNode }) => {
       const loadedPages = loadPagesFromStorage();
       setPages(loadedPages);
       setIsLoading(false);
-      console.log('Reset concluído');
     }, 100);
   };
 
