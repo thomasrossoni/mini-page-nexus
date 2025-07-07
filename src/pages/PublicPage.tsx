@@ -14,8 +14,11 @@ const PublicPage = () => {
     // Aguardar o contexto carregar antes de buscar a página
     if (isLoading) return;
     
+    // Forçar reload do localStorage para garantir dados atualizados
+    const savedPages = localStorage.getItem('linkLandingPages');
+    console.log('PublicPage: Raw localStorage:', savedPages);
     console.log('PublicPage: Buscando URL:', url);
-    console.log('PublicPage: Total de páginas:', pages.length);
+    console.log('PublicPage: Total de páginas no contexto:', pages.length);
     console.log('PublicPage: URLs disponíveis:', pages.map(p => p.url));
     
     const foundPage = pages.find(p => p.url === url && p.status === 'published');
